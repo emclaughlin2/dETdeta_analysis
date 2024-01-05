@@ -26,9 +26,9 @@
 
 using namespace std;
 
-void dETdeta_vertex_reweighting(int runnumber) {	
+void dETdeta_vertex_reweighting(int runnumber, const char* generator) {	
 
-	TFile *out = new TFile(TString::Format("dETdeta_vertex_reweight_run%d.root",runnumber),"RECREATE");
+	TFile *out = new TFile(TString::Format("dETdeta_vertex_reweight_run%d_%s.root",runnumber, generator),"RECREATE");
 	
 	TH1F* h_vz_data = new TH1F("h_vz_data","",200,-50,50);
 	TH1F* h_vz_mc = new TH1F("h_vz_mc","",200,-50,50);
@@ -41,15 +41,29 @@ void dETdeta_vertex_reweighting(int runnumber) {
     
     const char* dataInputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
     for (int i = 0; i < 5; i++) {
-    	TString dataWildcardPath = TString::Format("%sevents_20231211_p004_23696_data_cor_%d.root", dataInputDirectory, i);
+    	TString dataWildcardPath = TString::Format("%sevents_pA_%d_data_cor_%d.root", dataInputDirectory, runnumber, i);
     	datachain.Add(dataWildcardPath);
     }
 	TTreeReader datareader(&datachain);
 
-    const char* mcInputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
-	for (int i = 0; i < 5; i++) {
-	    	TString mcWildcardPath = TString::Format("%sevents_20231122_nopileup_mc_cor_%d.root", mcInputDirectory, i);
+	if (!strcmp(generator, "hijing")) {
+		const char* mcInputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
+		for (int i = 0; i < 5; i++) {
+		    	TString mcWildcardPath = TString::Format("%sevents_20231122_nopileup_mc_cor_%d.root", mcInputDirectory, i);
+		    	mcchain.Add(mcWildcardPath);
+		}
+	} else if (!strcmp(generator, "epos")) {
+		const char* mcInputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/eposrun/plugdoor_condor/";
+	    for (int i = 0; i < 10; i++) {
+	    	TString mcWildcardPath = TString::Format("%sOutDir%d/epos_sim_output.root", inputDirectory, i);
 	    	mcchain.Add(mcWildcardPath);
+	    }
+	} else if (!strcmp(generator, "ampt")) {
+		const char* mcInputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/amptrun/plugdoor_condor/";
+	    for (int i = 0; i < 10; i++) {
+	    	TString mcWildcardPath = TString::Format("%sOutDir%d/ampt_sim_output.root", inputDirectory, i);
+	    	mcchain.Add(mcWildcardPath);
+	    }
 	}
 	TTreeReader mcreader(&mcchain);
 
