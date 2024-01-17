@@ -26,15 +26,15 @@
 
 using namespace std;
 
-std::set<std::tuple<int, int>> emcal_hot_dead_map;
-std::set<std::tuple<int, int>> ihcal_hot_dead_map;
+std::set<std::tuple<int, int>> emcal_hot_dead_map = {{13,232},{47,138}};
+std::set<std::tuple<int, int>> ihcal_hot_dead_map = {{8,32},{7,51}};
 std::set<std::tuple<int, int>> ohcal_hot_dead_map;
 
 double emcal_eta_bin_centers[24];
 double ihcal_eta_bin_centers[24];
 double ohcal_eta_bin_centers[24];
 
-double vertex_reweight[200] {1.0};
+double vertex_reweight[200] = {1.0};
 std::vector<float> centrality_bin;
 
 const double eta_bin_centers[24] = {-1.05417,-0.9625,-0.870833,-0.779167,-0.6875,-0.595833,-0.504167,-0.4125,-0.320833,-0.229167,
@@ -48,51 +48,56 @@ const int g4Size = 100000;
 const int vtxSize = 3;
 
 void fill_hot_dead_map_eta_bin_centers(int runnumber, float minus_z, float plus_z) {
-	// hot dead maps 
-    vector<int> emcal_hot_dead_ieta;
-    vector<int> emcal_hot_dead_iphi;
-    vector<int> ihcal_hot_dead_ieta;
-    vector<int> ihcal_hot_dead_iphi;
-    vector<int> ohcal_hot_dead_ieta;
-    vector<int> ohcal_hot_dead_iphi;
-    vector<float> emcal_eta_bins;
-    vector<float> ihcal_eta_bins;
-    vector<float> ohcal_eta_bins;
 
-	TFile *hotdeadfile = new TH1F.Open(TString::Format("run%d_hotdeadmap_z_%d_%d.root", runnumber, floor(minus_z), floor(plus_z)).c_str(), "READ");
-	TTree *hotdeadtree = new TTree("T");
-	hotdeadtree->SetBranchAddress("emcal_hot_dead_ieta", emcal_hot_dead_ieta);
-    hotdeadtree->SetBranchAddress("emcal_hot_dead_iphi", emcal_hot_dead_iphi);
-    hotdeadtree->SetBranchAddress("ihcal_hot_dead_ieta", ihcal_hot_dead_ieta);
-    hotdeadtree->SetBranchAddress("ihcal_hot_dead_iphi", ihcal_hot_dead_iphi);
-    hotdeadtree->SetBranchAddress("ohcal_hot_dead_ieta", ohcal_hot_dead_ieta);
-    hotdeadtree->SetBranchAddress("ohcal_hot_dead_iphi", ohcal_hot_dead_iphi);
-    hotdeadtree->SetBranchAddress("emcal_eta_bin_centers", emcal_eta_bins);
-    hotdeadtree->SetBranchAddress("ihcal_eta_bin_centers", ihcal_eta_bins);
-    hotdeadtree->SetBranchAddress("ohcal_eta_bin_centers", ohcal_eta_bins);
+	// hot dead maps 
+    vector<int> *emcal_hot_dead_ieta = nullptr;
+    vector<int> *emcal_hot_dead_iphi = nullptr;
+    vector<int> *ihcal_hot_dead_ieta = nullptr;
+    vector<int> *ihcal_hot_dead_iphi = nullptr;
+    vector<int> *ohcal_hot_dead_ieta = nullptr;
+    vector<int> *ohcal_hot_dead_iphi = nullptr;
+    vector<float> *ihcal_eta_bins = nullptr;
+    vector<float> *ohcal_eta_bins = nullptr;
+
+	TFile *hotdeadfile = new TFile(TString::Format("run%d_hotdeadmap_z_%d_%d.root", runnumber, int(floor(minus_z)), int(floor(plus_z))), "READ");
+	TTree *hotdeadtree = dynamic_cast<TTree*>(hotdeadfile->Get("T"));
+	hotdeadtree->SetBranchAddress("emcal_hot_dead_ieta", &emcal_hot_dead_ieta);
+    hotdeadtree->SetBranchAddress("emcal_hot_dead_iphi", &emcal_hot_dead_iphi);
+    hotdeadtree->SetBranchAddress("ihcal_hot_dead_ieta", &ihcal_hot_dead_ieta);
+    hotdeadtree->SetBranchAddress("ihcal_hot_dead_iphi", &ihcal_hot_dead_iphi);
+    hotdeadtree->SetBranchAddress("ohcal_hot_dead_ieta", &ohcal_hot_dead_ieta);
+    hotdeadtree->SetBranchAddress("ohcal_hot_dead_iphi", &ohcal_hot_dead_iphi);
+    hotdeadtree->SetBranchAddress("ihcal_eta_bin_centers", &ihcal_eta_bins);
+    hotdeadtree->SetBranchAddress("ohcal_eta_bin_centers", &ohcal_eta_bins);
 	hotdeadtree->GetEntry(0);
 
-	for (int i = 0; i < emcal_hot_dead_ieta.size(); i++) {
-		tuple<int, int> new_hot_tower = make_tuple(emcal_hot_dead_ieta[i], emcal_hot_dead_iphi[i]); 
+	//std::cout << "emcal hot dead map input size " << emcal_hot_dead_ieta->size() << std::endl;
+	for (int i = 0; i < emcal_hot_dead_ieta->size(); i++) {
+		tuple<int, int> new_hot_tower = make_tuple((*emcal_hot_dead_ieta)[i], (*emcal_hot_dead_iphi)[i]); 
         emcal_hot_dead_map.insert(new_hot_tower);
 	}
-	for (int i = 0; i < emcal_hot_dead_ieta.size(); i++) {
-		tuple<int, int> new_hot_tower = make_tuple(emcal_hot_dead_ieta[i], emcal_hot_dead_iphi[i]); 
-        emcal_hot_dead_map.insert(new_hot_tower);
+	//std::cout << "emcal hot dead map set size " << emcal_hot_dead_map.size() << std::endl;
+	
+	//std::cout << "ihcal hot dead map input size " << ihcal_hot_dead_ieta->size() << std::endl;
+	for (int i = 0; i < ihcal_hot_dead_ieta->size(); i++) {
+		tuple<int, int> new_hot_tower = make_tuple((*ihcal_hot_dead_ieta)[i], (*ihcal_hot_dead_iphi)[i]); 
+        ihcal_hot_dead_map.insert(new_hot_tower);
 	}
-	for (int i = 0; i < emcal_hot_dead_ieta.size(); i++) {
-		tuple<int, int> new_hot_tower = make_tuple(emcal_hot_dead_ieta[i], emcal_hot_dead_iphi[i]); 
-        emcal_hot_dead_map.insert(new_hot_tower);
-	}
+	//std::cout << "ihcal hot dead map set size " << ihcal_hot_dead_map.size() << std::endl;
 
-	for (int i = 0; i < emcal_eta_bins.size(); i++) {
-		emcal_eta_bin_centers[i] = emcal_eta_bins[i];
+	//std::cout << "ohcal hot dead map input size " << ohcal_hot_dead_ieta->size() << std::endl;
+	for (int i = 0; i < ohcal_hot_dead_ieta->size(); i++) {
+		tuple<int, int> new_hot_tower = make_tuple((*ohcal_hot_dead_ieta)[i], (*ohcal_hot_dead_iphi)[i]); 
+        ohcal_hot_dead_map.insert(new_hot_tower);
 	}
-	for (int i = 0; i < ihcal_eta_bins.size(); i++) {
-		ihcal_eta_bin_centers[i] = ihcal_eta_bins[i];
+	//std::cout << "ohcal hot dead map set size " << ohcal_hot_dead_map.size() << std::endl;
+
+	for (int i = 0; i < ihcal_eta_bins->size(); i++) {
+		ihcal_eta_bin_centers[i] = (*ihcal_eta_bins)[i];
+		emcal_eta_bin_centers[i] = (*ihcal_eta_bins)[i];
 	}
-	for (int i = 0; i < ohcal_eta_bins.size(); i++) {
-		ohcal_eta_bin_centers[i] = ohcal_eta_bins[i];
+	for (int i = 0; i < ohcal_eta_bins->size(); i++) {
+		ohcal_eta_bin_centers[i] = (*ohcal_eta_bins)[i];
 	}
 
 	hotdeadfile->Close();
@@ -100,40 +105,54 @@ void fill_hot_dead_map_eta_bin_centers(int runnumber, float minus_z, float plus_
 }
 
 void fill_zvertex_centrality(int dataormc, int runnumber, const char* generator) {
+	
 	TFile *zvertexfile;
 	float vz_reweight[200]; 
 	float mc_cent[20];
 	float data_cent[20];
 	if (dataormc) {
-		zvertexfile = new TFile.Open(TString::Format("dETdeta_vertex_reweight_run%d_%s.root",runnumber, generator).c_str(), "READ");
-		TTree* vertextree = TFile.Get("T");
+		zvertexfile = new TFile(TString::Format("dETdeta_vertex_reweight_run%d_%s.root", runnumber, generator), "READ");
+		TTree *vertextree = dynamic_cast<TTree*>(zvertexfile->Get("T"));
 		vertextree->SetBranchAddress("vertex_reweight", vz_reweight);
 		vertextree->SetBranchAddress("mc_centrality", mc_cent);
 		vertextree->GetEntry(0);
 		for (int i = 0; i < 200; i++) {
 			vertex_reweight[i] = vz_reweight[i];
 		}
+		centrality_bin.assign(mc_cent, mc_cent+20);
 	} else {
-		zvertexfile = new TFile.Open(TString::Format("dETdeta_vertex_reweight_run%d_epos.root",runnumber).c_str(), "READ");
+		zvertexfile = new TFile(TString::Format("dETdeta_vertex_reweight_run%d_epos.root",runnumber), "READ");
+		TTree *vertextree = dynamic_cast<TTree*>(zvertexfile->Get("T"));
 		vertextree->SetBranchAddress("data_centrality", data_cent);
+		vertextree->GetEntry(0);
+		centrality_bin.assign(data_cent, data_cent+20);
 	}
-	if (dataormc) centrality_bin.assign(mc_cent, mc_cent+20);
-    if (!dataormc) centrality_bin.assign(data_cent, data_cent+20);
-    assert(centrality_bin.size() == 20);
-
-    zvertexfile->Close();
+	zvertexfile->Close();
 
 }
 
-void dETdeta_analysis(int dataormc = 0, int reweighting = 1, int central = 0, const char* generator = "", int runnumber = 23727, float minus_z, float plus_z) {
+void dETdeta_analysis(int runnumber = 23727, const char* generator = "", float minus_z = -2, float plus_z = 2, int dataormc = 0, int reweighting = 1, int central = 0, const char* opt_tag = "") {
 
-	string filename = "dETdeta_analysis_23696_z=0";
+	string filename = "dETdeta_analysis_";
+	filename += to_string(runnumber) + "_z=0";
+	string opttag = opt_tag;
+	if (strcmp(opt_tag,"")) { filename += "_" + opttag; }
   	string dattag = (dataormc?"mc":"data");
   	string weighttag = (reweighting?"reweight":"noweight");
   	string centtag = (central?"0-10":"0-90"); 
   	string gentag = generator;
   	if (!strcmp(generator,"")) filename += "_" + dattag + "_" + weighttag + "_" + centtag + ".root";
   	else filename += "_" + dattag + "_" + weighttag + "_" + centtag + "_" + gentag + ".root";
+
+	fill_hot_dead_map_eta_bin_centers(runnumber, minus_z, plus_z);
+	fill_zvertex_centrality(dataormc, runnumber, generator);
+	assert(centrality_bin.size() == 20);
+
+	std::cout << "centrality_bins" << std::endl;
+	for (int i = 0; i < 20; i++) {
+		std::cout << centrality_bin[i] << " ";
+	}
+	std::cout << std::endl;
 
 	TFile *out = new TFile(filename.c_str(),"RECREATE");
 	TH1F* h_vz = new TH1F("h_vz","",400, -100, 100);
@@ -161,11 +180,7 @@ void dETdeta_analysis(int dataormc = 0, int reweighting = 1, int central = 0, co
 	TH1F* h_emcal = new TH1F("h_emcal","",1000,0,10);
 	TH1F* h_ihcal = new TH1F("h_ihcal","",1000,0,10);
 	TH1F* h_ohcal = new TH1F("h_ohcal","",1000,0,10);
-
-	fill_hot_dead_map_eta_bin_centers(runnumber);
-	fill_zvertex_centrality(dataormc, runnumber, generator);
-	assert(centrality_bin.size() == 20);
-
+	
 	int emcal_num_bins = 24;
 	double emcal_bin_edges[25];
     if (!dataormc || reweighting) {
@@ -220,8 +235,8 @@ void dETdeta_analysis(int dataormc = 0, int reweighting = 1, int central = 0, co
     } else if (dataormc && !strcmp(generator, "hijing")) {
     	// location of HIJING files 
 	    const char* inputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
-	    for (int i = 0; i < 555; i++) {
-	    	TString wildcardPath = TString::Format("%sevents_20231122_nopileup_mc_cor_%d.root", inputDirectory, i);
+	    for (int i = 0; i < 2500; i++) {
+	    	TString wildcardPath = TString::Format("%sevents_20240110_run101_nopileup_mc_cor_%d.root", inputDirectory, i);
 	    	chain.Add(wildcardPath);
 	    }
 	    //TString wildcardPath = "/sphenix/user/jocl/projects/sandbox/datatemp/merged_dEdeta_20231129_21615_mc_cor_555.root";
@@ -235,7 +250,9 @@ void dETdeta_analysis(int dataormc = 0, int reweighting = 1, int central = 0, co
 	    }
     } else if (!dataormc) {
     	const char* inputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
-		TString wildcardPath = TString::Format("%sevents_pA_%d_data_cor*.root", inputDirectory, runnumber); 
+		TString wildcardPath = TString::Format("%sevents_pA_%d_notiming_hcal_data_cor*.root", inputDirectory, runnumber); 
+		//TString wildcardPath = TString::Format("%sevents_20240112_p007_23696_data_cor*.root", inputDirectory); 
+		//TString wildcardPath = TString::Format("%sevents_pA_%d_data_cor_0.root", inputDirectory, runnumber); 
     	chain.Add(wildcardPath);
     } else {
     	std::cout << "generator/data not found" << std::endl;
@@ -303,7 +320,7 @@ void dETdeta_analysis(int dataormc = 0, int reweighting = 1, int central = 0, co
 
     Long64_t nEntries = chain.GetEntries();
     for (Long64_t entry = 0; entry < nEntries; ++entry) {
-    //for (Long64_t entry = 0; entry < 100000; ++entry) {
+    //for (Long64_t entry = 0; entry < 1; ++entry) {
         chain.GetEntry(entry);
     	if (eventnumber % 1000 == 0) cout << "event " << eventnumber << endl;
 
@@ -321,6 +338,7 @@ void dETdeta_analysis(int dataormc = 0, int reweighting = 1, int central = 0, co
 
   		eventnumber++;
   		// require that simulation could reconstruct a vertex for the event
+  		if(isnan(m_vtx[2])) { continue; }
   		if (m_vtx[2] < minus_z || m_vtx[2] > plus_z) { continue; }
 
   		float totalcharge = 0.0;
@@ -350,8 +368,11 @@ void dETdeta_analysis(int dataormc = 0, int reweighting = 1, int central = 0, co
 			}
 			h_event_truth_energy->Fill(truthe,vz_weight);
 		}
-		
+		// commented out for testing with run 23696 
+		/*
 		for (int i = 0; i < m_simtwrmult_cemc; i++) {
+			if (m_simtwr_cemc_ieta[i] < 8) { continue; }
+			//if (m_simtwr_cemc_e[i] < 0.013) { continue; }
 			std::tuple<int, int> hot_tower = std::make_tuple(m_simtwr_cemc_ieta[i], m_simtwr_cemc_iphi[i]);
 		    auto it = emcal_hot_dead_map.find(hot_tower);
 		    if (it != emcal_hot_dead_map.end()) { continue; }
@@ -361,11 +382,13 @@ void dETdeta_analysis(int dataormc = 0, int reweighting = 1, int central = 0, co
 			h_emcal->Fill(m_simtwr_cemc_e[i]/cosh(m_simtwr_cemc_eta[i]), vz_weight);
 			h_eT_emcal->Fill(m_simtwr_cemc_eta[i],m_simtwr_cemc_e[i]*vz_weight/cosh(m_simtwr_cemc_eta[i]));
 		}
-
+		*/
 
 		for (int i = 0; i < m_simtwrmult_ihcal; i++) {
-			if (m_simtwr_ihcal_ieta[i] == 8 && m_simtwr_ihcal_iphi[i] == 32) { continue; }
-			if (m_simtwr_ihcal_ieta[i] == 7 && m_simtwr_ihcal_iphi[i] == 51) { continue; }
+			//if (m_simtwr_ihcal_e[i] < 0.005) { continue; }
+			std::tuple<int, int> hot_tower = std::make_tuple(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i]);
+		    auto it = ihcal_hot_dead_map.find(hot_tower);
+		    if (it != ihcal_hot_dead_map.end()) { continue; }
 			h_2D_ihcal_calib->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_e[i]*vz_weight);
 			h_2D_ihcal_calibT->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_e[i]*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
 			ihcale += m_simtwr_ihcal_e[i]/cosh(m_simtwr_ihcal_eta[i]); 
@@ -375,6 +398,11 @@ void dETdeta_analysis(int dataormc = 0, int reweighting = 1, int central = 0, co
 
 
 		for (int i = 0; i < m_simtwrmult_ohcal; i++) {
+			//if (m_simtwr_ohcal_e[i] < 0.03) { continue; }
+			if (m_simtwr_ohcal_iphi[i] < 14 || m_simtwr_ohcal_iphi[i] > 19) { continue; }
+			std::tuple<int, int> hot_tower = std::make_tuple(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i]);
+		    auto it = ohcal_hot_dead_map.find(hot_tower);
+		    if (it != ohcal_hot_dead_map.end()) { continue; }
 			h_2D_ohcal_calib->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_e[i]*vz_weight);
 			h_2D_ohcal_calibT->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_e[i]*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
 			ohcale += m_simtwr_ohcal_e[i]/cosh(m_simtwr_ohcal_eta[i]); 
