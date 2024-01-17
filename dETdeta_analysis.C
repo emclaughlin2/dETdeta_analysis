@@ -349,7 +349,7 @@ void dETdeta_analysis(int runnumber = 23727, const char* generator = "", float m
   		h_mbd->Fill(totalcharge);
 
   		h_vz->Fill(m_vtx[2]);
-  		if (reweighting && dataormc) { vz_weight = vertex_reweight[int(floor(m_vtx[2]*2)+50)]; }
+  		if (reweighting && dataormc) { vz_weight = vertex_reweight[int(floor(m_vtx[2]*2)+100)]; }
   		h_vz_reweight->Fill(m_vtx[2],vz_weight);
   		totalweights += vz_weight;
 
@@ -368,11 +368,10 @@ void dETdeta_analysis(int runnumber = 23727, const char* generator = "", float m
 			}
 			h_event_truth_energy->Fill(truthe,vz_weight);
 		}
-		// commented out for testing with run 23696 
-		/*
+		
 		for (int i = 0; i < m_simtwrmult_cemc; i++) {
 			if (m_simtwr_cemc_ieta[i] < 8) { continue; }
-			//if (m_simtwr_cemc_e[i] < 0.013) { continue; }
+			//if (m_simtwr_cemc_e[i] < 0.013) { continue; } // 10 ADC cut
 			std::tuple<int, int> hot_tower = std::make_tuple(m_simtwr_cemc_ieta[i], m_simtwr_cemc_iphi[i]);
 		    auto it = emcal_hot_dead_map.find(hot_tower);
 		    if (it != emcal_hot_dead_map.end()) { continue; }
@@ -382,10 +381,9 @@ void dETdeta_analysis(int runnumber = 23727, const char* generator = "", float m
 			h_emcal->Fill(m_simtwr_cemc_e[i]/cosh(m_simtwr_cemc_eta[i]), vz_weight);
 			h_eT_emcal->Fill(m_simtwr_cemc_eta[i],m_simtwr_cemc_e[i]*vz_weight/cosh(m_simtwr_cemc_eta[i]));
 		}
-		*/
 
 		for (int i = 0; i < m_simtwrmult_ihcal; i++) {
-			//if (m_simtwr_ihcal_e[i] < 0.005) { continue; }
+			//if (m_simtwr_ihcal_e[i] < 0.005) { continue; } // 10 ADC cut 
 			std::tuple<int, int> hot_tower = std::make_tuple(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i]);
 		    auto it = ihcal_hot_dead_map.find(hot_tower);
 		    if (it != ihcal_hot_dead_map.end()) { continue; }
@@ -398,7 +396,7 @@ void dETdeta_analysis(int runnumber = 23727, const char* generator = "", float m
 
 
 		for (int i = 0; i < m_simtwrmult_ohcal; i++) {
-			//if (m_simtwr_ohcal_e[i] < 0.03) { continue; }
+			//if (m_simtwr_ohcal_e[i] < 0.03) { continue; } // 10 ADC cut
 			if (m_simtwr_ohcal_iphi[i] < 14 || m_simtwr_ohcal_iphi[i] > 19) { continue; }
 			std::tuple<int, int> hot_tower = std::make_tuple(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i]);
 		    auto it = ohcal_hot_dead_map.find(hot_tower);

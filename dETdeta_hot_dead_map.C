@@ -152,7 +152,7 @@ void dETdeta_hot_dead_map(int runnumber, float minus_z = -2, float plus_z = 2) {
                 continue; 
             }
             h_2D_emcal_calib->Fill(m_simtwr_cemc_ieta[i], m_simtwr_cemc_iphi[i], m_simtwr_cemc_e[i]);
-            if (m_simtwr_cemc_e[i] > 0.2) {
+            if (m_simtwr_cemc_e[i] > 0.13) { // 100 ADC cut 
                 h_2D_emcal_hits->Fill(m_simtwr_cemc_ieta[i], m_simtwr_cemc_iphi[i]);
                 h_emcal_time->Fill(m_simtwr_cemc_time[i]);
             }
@@ -171,7 +171,7 @@ void dETdeta_hot_dead_map(int runnumber, float minus_z = -2, float plus_z = 2) {
                 continue; 
             }
             h_2D_ihcal_calib->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_e[i]);
-            if (m_simtwr_ihcal_e[i] > 0.05) {
+            if (m_simtwr_ihcal_e[i] > 0.05) { // 100 ADC cut 
                 h_2D_ihcal_hits->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i]);
                 h_ihcal_time->Fill(m_simtwr_ihcal_time[i]);
             }
@@ -191,7 +191,7 @@ void dETdeta_hot_dead_map(int runnumber, float minus_z = -2, float plus_z = 2) {
                 continue; 
             }
             h_2D_ohcal_calib->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_e[i]);
-            if (m_simtwr_ohcal_e[i] > 0.1) {
+            if (m_simtwr_ohcal_e[i] > 0.3) { // 100 ADC cut 
                 h_2D_ohcal_hits->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i]);
                 h_ohcal_time->Fill(m_simtwr_ohcal_time[i]);
             }
