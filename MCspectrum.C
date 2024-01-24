@@ -22,13 +22,14 @@ const double PI_M = 3.14159265358979323846;
 // make TChain
 TChain *chain = new TChain("ttree");
 
-
+/*
 // HIJING/AMPT Npart centrality bounds
 int bound10 = 275;
 int bound20 = 194;
 int bound40 = 89;
 int bound60 = 32;
 int bound92 = 3;
+*/
 
 /*
 // EPOS Npart centrality bounds
@@ -38,6 +39,14 @@ int bound40 = 97;
 int bound60 = 37;
 int bound92 = 3;
 */
+
+// AMPT MBD charge centrality bounds
+int bound10 = 142123;
+int bound20 = 100250;
+int bound40 = 47382;
+int bound60 = 19223;
+int bound92 = 2228.0;
+
 const int ncentbins = 5;
 
 double ptbins[27] = {0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.2, 2.4, 2.6, 2.8, 3, 3.5, 4, 4.5, 5, 5.5, 6};
@@ -344,7 +353,7 @@ void addFilesToChain(TChain *chain, const std::string &path)
     {
         if (TString(dirname).Contains("OutDir"))
         {
-            std::string fullPath = path + "/" + dirname + "/epos_sim_output.root";
+            std::string fullPath = path + "/" + dirname + "/ampt_sim_output.root";
             chain->Add(fullPath.c_str());
         }
     }
@@ -353,7 +362,7 @@ void addFilesToChain(TChain *chain, const std::string &path)
 void MCspectrum()
 {
 
-    addFilesToChain(chain, "/sphenix/user/egm2153/calib_study/detdeta/eposrun/condor");
+    addFilesToChain(chain, "/sphenix/user/egm2153/calib_study/detdeta/amptrun/condor");
     /*
     const char* inputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
         for (int i = 0; i < 555; i++) {
@@ -374,6 +383,8 @@ void MCspectrum()
     float m_hepmc_phi[20000];
     float m_hepmc_pz[20000];
     float m_hepmc_e[20000];
+    int m_sectormb = 0;
+    float m_mbenergy[256];
 
 
     chain->SetBranchAddress("truthpar_nh", &m_hepmc);
@@ -387,6 +398,8 @@ void MCspectrum()
     chain->SetBranchAddress("truthparh_pz", m_hepmc_pz);
     chain->SetBranchAddress("truthparh_phi", m_hepmc_phi);
     chain->SetBranchAddress("truthparh_e", m_hepmc_e);
+    chain->SetBranchAddress("sectormb", &m_sectormb);
+    chain->SetBranchAddress("mbenrgy", m_mbenergy);
 
     // read in the upweight factor
     TFile *f_upweight = new TFile("/sphenix/user/shuhangli/dETdeta/macro/scalecompare.root");
@@ -426,7 +439,7 @@ void MCspectrum()
     h_kmi4060_ratio = (TH1F *)f_upweight->Get("h_kmi4060_ratio");
     h_kmi6092_ratio = (TH1F *)f_upweight->Get("h_kmi6092_ratio");
 
-    TFile *fout = new TFile("EPOSspectrum.root", "RECREATE");
+    TFile *fout = new TFile("AMPTspectrum.root", "RECREATE");
     // make histograms
     TH1F *hnpart = new TH1F("hnpart", "hnpart", 400, 0, 400);
     TH1F *hprotonpt[ncentbins];
@@ -492,8 +505,14 @@ void MCspectrum()
             std::cout << "Event " << i << " / " << nentries << std::endl;
         chain->GetEntry(i);
         hnpart->Fill(m_npart_proj + m_npart_targ);
+        float mbd_total = 0;
+        for (int j = 0; j < m_sectormb; j++) {
+            mbd_total += m_mbenergy[j];
+        }
+
         // find centrality bin
-        int centbin = findcentbin(m_npart_proj + m_npart_targ);
+        //int centbin = findcentbin(m_npart_proj + m_npart_targ); // for cent from Npart
+        int centbin = findcentbin(mbd_total); // for cent from MBD charge 
         if (centbin == -1)
         {
             continue;
