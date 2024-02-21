@@ -22,14 +22,13 @@ const double PI_M = 3.14159265358979323846;
 // make TChain
 TChain *chain = new TChain("ttree");
 
-/*
-// HIJING/AMPT Npart centrality bounds
+
+// HIJING Npart centrality bounds
 int bound10 = 275;
 int bound20 = 194;
 int bound40 = 89;
 int bound60 = 32;
 int bound92 = 3;
-*/
 
 /*
 // EPOS Npart centrality bounds
@@ -40,12 +39,14 @@ int bound60 = 37;
 int bound92 = 3;
 */
 
-// AMPT MBD charge centrality bounds
-int bound10 = 142123;
-int bound20 = 100250;
-int bound40 = 47382;
-int bound60 = 19223;
-int bound92 = 2228.0;
+/*
+// AMPT Npart centrality bounds
+int bound10 = 293;
+int bound20 = 217;
+int bound40 = 110;
+int bound60 = 46;
+int bound92 = 6;
+*/
 
 const int ncentbins = 5;
 
@@ -362,14 +363,15 @@ void addFilesToChain(TChain *chain, const std::string &path)
 void MCspectrum()
 {
 
-    addFilesToChain(chain, "/sphenix/user/egm2153/calib_study/detdeta/amptrun/condor");
-    /*
+    //addFilesToChain(chain, "/sphenix/user/egm2153/calib_study/detdeta/amptrun/condor");
+    
     const char* inputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
-        for (int i = 0; i < 555; i++) {
-            TString wildcardPath = TString::Format("%sevents_20231122_nopileup_mc_cor_%d.root", inputDirectory, i);
+        for (int i = 0; i < 2500; i++) {
+            TString wildcardPath = TString::Format("%sevents_20240110_run101_nopileup_mc_cor_%d.root", inputDirectory, i); // hijing
+            //TString wildcardPath = TString::Format("%sevents_20240214_run10_nopileup_ampt_cor_%d.root", inputDirectory, i); // ampt
+            //TString wildcardPath = TString::Format("%sevents_20240110_run10_nopileup_epos_cor_%d.root", inputDirectory, i); // epos
             chain->Add(wildcardPath);
     }
-    */
 
     // read data from tree
     int m_hepmc = -999;
@@ -439,7 +441,7 @@ void MCspectrum()
     h_kmi4060_ratio = (TH1F *)f_upweight->Get("h_kmi4060_ratio");
     h_kmi6092_ratio = (TH1F *)f_upweight->Get("h_kmi6092_ratio");
 
-    TFile *fout = new TFile("AMPTspectrum.root", "RECREATE");
+    TFile *fout = new TFile("HIJINGspectrum.root", "RECREATE");
     // make histograms
     TH1F *hnpart = new TH1F("hnpart", "hnpart", 400, 0, 400);
     TH1F *hprotonpt[ncentbins];
@@ -511,8 +513,8 @@ void MCspectrum()
         }
 
         // find centrality bin
-        //int centbin = findcentbin(m_npart_proj + m_npart_targ); // for cent from Npart
-        int centbin = findcentbin(mbd_total); // for cent from MBD charge 
+        int centbin = findcentbin(m_npart_proj + m_npart_targ); // for cent from Npart
+        //int centbin = findcentbin(mbd_total); // for cent from MBD charge 
         if (centbin == -1)
         {
             continue;

@@ -40,8 +40,8 @@ void dETdeta_vertex_reweighting(int runnumber, const char* generator) {
 	TChain datachain("ttree");
     
     const char* dataInputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
-    for (int i = 0; i < 230; i++) {
-    	TString dataWildcardPath = TString::Format("%sevents_pA_%d_data_cor_%d.root", dataInputDirectory, runnumber, i);
+    for (int i = 0; i < 230; i++) { 
+    	TString dataWildcardPath = TString::Format("%sevents_p008_zs_%d_data_cor_%d.root", dataInputDirectory, runnumber, i);
     	datachain.Add(dataWildcardPath);
     }
 	TTreeReader datareader(&datachain);

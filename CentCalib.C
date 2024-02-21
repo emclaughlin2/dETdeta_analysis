@@ -1,7 +1,7 @@
 void CentCalib(){
     //read in HIJINGcentcalib.root
     //TFile *fin = new TFile("HIJINGspectrum.root");
-    TFile *fin = new TFile("EPOSspectrum.root");
+    TFile *fin = new TFile("HIJINGspectrum.root");
     //get hnpart
     TH1F *hnpart = (TH1F*)fin->Get("hnpart");
     //find 0-10% centrality bin, 10-20 % ,20-40%, 40-60%, 60-92%

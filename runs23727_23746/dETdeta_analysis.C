@@ -26,7 +26,7 @@
 
 using namespace std;
 
-std::set<std::tuple<int, int>> emcal_hot_dead_map = {{13,232},{47,138}};
+std::set<std::tuple<int, int>> emcal_hot_dead_map = {{13,232},{47,138},{48,7}};
 std::set<std::tuple<int, int>> ihcal_hot_dead_map = {{8,32},{7,51}};
 std::set<std::tuple<int, int>> ohcal_hot_dead_map;
 
@@ -39,6 +39,10 @@ std::vector<float> centrality_bin;
 
 const double eta_bin_centers[24] = {-1.05417,-0.9625,-0.870833,-0.779167,-0.6875,-0.595833,-0.504167,-0.4125,-0.320833,-0.229167,
 	-0.1375,-0.0458333,0.0458333,0.1375,0.229167,0.320833,0.4125,0.504167,0.595833,0.6875,0.779167,0.870833,0.9625,1.05417};
+
+float em_zs_calib[96][256];
+float ih_zs_calib[24][64];
+float oh_zs_calib[24][64];
 
 const int cemcSize = 24576;
 const int ihcalSize = 1536;
@@ -131,21 +135,50 @@ void fill_zvertex_centrality(int dataormc, int runnumber, const char* generator)
 
 }
 
-void dETdeta_analysis(int runnumber = 23727, const char* generator = "", float minus_z = -2, float plus_z = 2, int dataormc = 0, int reweighting = 1, int central = 0, const char* opt_tag = "") {
+void fill_zs_cross_calib() {
+
+	float emcal_zs_calib[96][256];
+	float ihcal_zs_calib[24][64];
+	float ohcal_zs_calib[24][64];
+	TFile *zscalibfile = new TFile("/sphenix/user/egm2153/calib_study/zs_testing/zs_testing_run23727_p008_new.root", "READ");
+	TTree *zscalibtree = dynamic_cast<TTree*>(zscalibfile->Get("zs_calib_tree"));
+	zscalibtree->SetBranchAddress("emcal_zs_calib", emcal_zs_calib);
+	zscalibtree->SetBranchAddress("ihcal_zs_calib", ihcal_zs_calib);
+	zscalibtree->SetBranchAddress("ohcal_zs_calib", ohcal_zs_calib);
+	zscalibtree->GetEntry(0);
+	for (int i = 0; i < 96; i++) {
+		for (int j = 0; j < 256; j++) {
+			em_zs_calib[i][j] = emcal_zs_calib[i][j];
+			if (i < 24 && j < 64) {
+				ih_zs_calib[i][j] = ihcal_zs_calib[i][j];
+				oh_zs_calib[i][j] = ohcal_zs_calib[i][j];
+			}
+		}
+	}
+	zscalibfile->Close();
+}
+
+void dETdeta_analysis(int runnumber = 23727, const char* generator = "", float minus_z = -2, float plus_z = 2, int dataormc = 0, int reweighting = 1, int central = 0, int zs = 0, int zs_value = 10, int time = 0, const char* opt_tag = "") {
 
 	string filename = "dETdeta_analysis_";
 	filename += to_string(runnumber) + "_z=0";
 	string opttag = opt_tag;
 	if (strcmp(opt_tag,"")) { filename += "_" + opttag; }
+	string zstag; 
+	if (zs == 0) { zstag = "nozs"; }
+	if (zs == 1) { zstag = "zs_" + to_string(zs_value) + "ADC"; }
+	if (zs == 2) { zstag = "zs_abs" + to_string(zs_value) + "ADC"; }
+	string timetag = (time?"emcal_timecut_":"");
   	string dattag = (dataormc?"mc":"data");
   	string weighttag = (reweighting?"reweight":"noweight");
   	string centtag = (central?"0-10":"0-90"); 
   	string gentag = generator;
-  	if (!strcmp(generator,"")) filename += "_" + dattag + "_" + weighttag + "_" + centtag + ".root";
-  	else filename += "_" + dattag + "_" + weighttag + "_" + centtag + "_" + gentag + ".root";
+  	if (!strcmp(generator,"")) filename += "_" + zstag + "_" + timetag + dattag + "_" + weighttag + "_" + centtag + ".root";
+  	else filename += "_" + zstag + "_" + timetag + dattag + "_" + weighttag + "_" + centtag + "_" + gentag + ".root";
 
 	fill_hot_dead_map_eta_bin_centers(runnumber, minus_z, plus_z);
 	fill_zvertex_centrality(dataormc, runnumber, generator);
+	fill_zs_cross_calib();
 	assert(centrality_bin.size() == 20);
 
 	std::cout << "centrality_bins" << std::endl;
@@ -171,15 +204,19 @@ void dETdeta_analysis(int runnumber = 23727, const char* generator = "", float m
   	TH2F* h_2D_ohcal_calibT = new TH2F("h_2D_ohcal_calibT","",24,0.,24.,64,0.,64.);
   	TH2F* h_2D_emcal_calibT = new TH2F("h_2D_emcal_calibT","",96,0.,96.,256,0.,256.);
 	
-	TH1F* h_event_energy = new TH1F("h_event_energy","", 5000,0,5000);
-	TH1F* h_event_hcal_energy = new TH1F("h_event_hcal_energy","", 5000,0,5000);
-	TH1F* h_event_emcal_energy = new TH1F("h_event_emcal_energy","", 5000,0,5000);
-	TH1F* h_event_ihcal_energy = new TH1F("h_event_ihcal_energy","", 1000,0,1000);
-	TH1F* h_event_ohcal_energy = new TH1F("h_event_ohcal_energy","", 1000,0,1000);
+	TH1F* h_event_energy = new TH1F("h_event_energy","", 6000,-1000,5000);
+	TH1F* h_event_hcal_energy = new TH1F("h_event_hcal_energy","", 6000,-1000,5000);
+	TH1F* h_event_emcal_energy = new TH1F("h_event_emcal_energy","", 6000,-1000,5000);
+	TH1F* h_event_ihcal_energy = new TH1F("h_event_ihcal_energy","", 2000,-1000,1000);
+	TH1F* h_event_ohcal_energy = new TH1F("h_event_ohcal_energy","", 2000,-1000,1000);
 
 	TH1F* h_emcal = new TH1F("h_emcal","",1000,0,10);
 	TH1F* h_ihcal = new TH1F("h_ihcal","",1000,0,10);
 	TH1F* h_ohcal = new TH1F("h_ohcal","",1000,0,10);
+
+	TH2F* h_em_zero_zscross = new TH2F("h_em_zero_zscross","",96,0,96,256,0,256);
+	TH2F* h_ih_zero_zscross = new TH2F("h_ih_zero_zscross","",24,0,24,64,0,64);
+	TH2F* h_oh_zero_zscross = new TH2F("h_oh_zero_zscross","",24,0,24,64,0,64);
 	
 	int emcal_num_bins = 24;
 	double emcal_bin_edges[25];
@@ -239,8 +276,6 @@ void dETdeta_analysis(int runnumber = 23727, const char* generator = "", float m
 	    	TString wildcardPath = TString::Format("%sevents_20240110_run101_nopileup_mc_cor_%d.root", inputDirectory, i);
 	    	chain.Add(wildcardPath);
 	    }
-	    //TString wildcardPath = "/sphenix/user/jocl/projects/sandbox/datatemp/merged_dEdeta_20231129_21615_mc_cor_555.root";
-    	//chain.Add(wildcardPath);
     } else if (dataormc && !strcmp(generator, "ampt")) {
     	// location of AMPT files 
 	    const char* inputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/amptrun/plugdoor_condor/";
@@ -250,10 +285,15 @@ void dETdeta_analysis(int runnumber = 23727, const char* generator = "", float m
 	    }
     } else if (!dataormc) {
     	const char* inputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
-		TString wildcardPath = TString::Format("%sevents_pA_%d_notiming_hcal_data_cor*.root", inputDirectory, runnumber); 
+		//TString wildcardPath = TString::Format("%sevents_p008_zs_%d_data_cor*.root", inputDirectory, runnumber); 
+		//TString wildcardPath = TString::Format("%sevents_p008_zs_%d_z-2cm_data_cor_*.root", inputDirectory, runnumber);
+		for (int i = 0; i < 230; i++) {
+			TString wildcardPath = TString::Format("%sevents_p008_zs_%d_data_cor_%d.root", inputDirectory, runnumber, i);
+			chain.Add(wildcardPath);
+		}
 		//TString wildcardPath = TString::Format("%sevents_20240112_p007_23696_data_cor*.root", inputDirectory); 
 		//TString wildcardPath = TString::Format("%sevents_pA_%d_data_cor_0.root", inputDirectory, runnumber); 
-    	chain.Add(wildcardPath);
+    	
     } else {
     	std::cout << "generator/data not found" << std::endl;
     	return;
@@ -261,19 +301,31 @@ void dETdeta_analysis(int runnumber = 23727, const char* generator = "", float m
 
     int m_simtwrmult_cemc;
     float m_simtwr_cemc_e[cemcSize];
+    float m_simtwr_cemc_zs_e[cemcSize];
     int m_simtwr_cemc_ieta[cemcSize];
     int m_simtwr_cemc_iphi[cemcSize];
     float m_simtwr_cemc_eta[cemcSize];
+    int m_simtwr_cemc_adc[cemcSize];
+    int m_simtwr_cemc_zs_adc[cemcSize];
+    float m_simtwr_cemc_time[cemcSize];
     int m_simtwrmult_ihcal;
     float m_simtwr_ihcal_e[ihcalSize];
+    float m_simtwr_ihcal_zs_e[ihcalSize];
     int m_simtwr_ihcal_ieta[ihcalSize];
     int m_simtwr_ihcal_iphi[ihcalSize];
     float m_simtwr_ihcal_eta[ihcalSize];
+    int m_simtwr_ihcal_adc[ihcalSize];
+    int m_simtwr_ihcal_zs_adc[ihcalSize];
+    float m_simtwr_ihcal_time[ihcalSize];
     int m_simtwrmult_ohcal;
     float m_simtwr_ohcal_e[ohcalSize];
+    float m_simtwr_ohcal_zs_e[ohcalSize];
     int m_simtwr_ohcal_ieta[ohcalSize];
     int m_simtwr_ohcal_iphi[ohcalSize];
     float m_simtwr_ohcal_eta[ohcalSize];
+    int m_simtwr_ohcal_adc[ohcalSize];
+    int m_simtwr_ohcal_zs_adc[ohcalSize];
+    float m_simtwr_ohcal_time[ohcalSize];
     int m_sectormb;
     float m_mbenergy[mbdSize];
     int m_g4;
@@ -289,19 +341,37 @@ void dETdeta_analysis(int runnumber = 23727, const char* generator = "", float m
     chain.SetBranchAddress("emcaletabin", m_simtwr_cemc_ieta);
     chain.SetBranchAddress("emcalphibin", m_simtwr_cemc_iphi);
     chain.SetBranchAddress("emetacor", m_simtwr_cemc_eta);
+    if (!dataormc) {
+    	chain.SetBranchAddress("emcalzs", m_simtwr_cemc_zs_e);
+	    chain.SetBranchAddress("emcaladc", m_simtwr_cemc_adc);
+	    chain.SetBranchAddress("emcalzsadc", m_simtwr_cemc_zs_adc);
+	    chain.SetBranchAddress("emcalt", m_simtwr_cemc_time);
+	}
 
     chain.SetBranchAddress("sectorih", &m_simtwrmult_ihcal);
     chain.SetBranchAddress("ihcalen", m_simtwr_ihcal_e);
     chain.SetBranchAddress("ihcaletabin", m_simtwr_ihcal_ieta);
     chain.SetBranchAddress("ihcalphibin", m_simtwr_ihcal_iphi);
     chain.SetBranchAddress("ihetacor", m_simtwr_ihcal_eta);
+    if (!dataormc) {
+    	chain.SetBranchAddress("ihcalzs", m_simtwr_ihcal_zs_e);
+	    chain.SetBranchAddress("ihcaladc", m_simtwr_ihcal_adc);
+	    chain.SetBranchAddress("ihcalzsadc", m_simtwr_ihcal_zs_adc);
+	    chain.SetBranchAddress("ihcalt", m_simtwr_ihcal_time);
+	}
 
     chain.SetBranchAddress("sectoroh", &m_simtwrmult_ohcal);
     chain.SetBranchAddress("ohcalen", m_simtwr_ohcal_e);
     chain.SetBranchAddress("ohcaletabin", m_simtwr_ohcal_ieta);
     chain.SetBranchAddress("ohcalphibin", m_simtwr_ohcal_iphi);
     chain.SetBranchAddress("ohetacor", m_simtwr_ohcal_eta);
-
+    if (!dataormc) {
+    	chain.SetBranchAddress("ohcalzs", m_simtwr_ohcal_zs_e);
+	    chain.SetBranchAddress("ohcaladc", m_simtwr_ohcal_adc);
+	    chain.SetBranchAddress("ohcalzsadc", m_simtwr_ohcal_zs_adc);
+	    chain.SetBranchAddress("ohcalt", m_simtwr_ohcal_time);
+	}
+	
     chain.SetBranchAddress("sectormb", &m_sectormb);
     chain.SetBranchAddress("mbenrgy", &m_mbenergy);
 
@@ -319,8 +389,9 @@ void dETdeta_analysis(int runnumber = 23727, const char* generator = "", float m
 	float totalweights = 0.0;
 
     Long64_t nEntries = chain.GetEntries();
+    std::cout << nEntries << std::endl;
     for (Long64_t entry = 0; entry < nEntries; ++entry) {
-    //for (Long64_t entry = 0; entry < 1; ++entry) {
+    //for (Long64_t entry = 0; entry < 1000; ++entry) {
         chain.GetEntry(entry);
     	if (eventnumber % 1000 == 0) cout << "event " << eventnumber << endl;
 
@@ -339,8 +410,7 @@ void dETdeta_analysis(int runnumber = 23727, const char* generator = "", float m
   		eventnumber++;
   		// require that simulation could reconstruct a vertex for the event
   		if(isnan(m_vtx[2])) { continue; }
-  		//if (m_vtx[2] < minus_z || m_vtx[2] > plus_z) { continue; } // changed for MC testing
-  		if (m_vtx[2] < -10 || m_vtx[2] > 10) { continue; }
+  		if (m_vtx[2] < minus_z || m_vtx[2] > plus_z) { continue; }
 
   		float totalcharge = 0.0;
   		for (int i = 0; i < m_sectormb; i++) {
@@ -371,50 +441,105 @@ void dETdeta_analysis(int runnumber = 23727, const char* generator = "", float m
 		}
 		
 		for (int i = 0; i < m_simtwrmult_cemc; i++) {
-			/* // changed for MC testing 
 			if (m_simtwr_cemc_ieta[i] < 8) { continue; }
-			//if (m_simtwr_cemc_e[i] < 0.013) { continue; } // 10 ADC cut
 			std::tuple<int, int> hot_tower = std::make_tuple(m_simtwr_cemc_ieta[i], m_simtwr_cemc_iphi[i]);
 		    auto it = emcal_hot_dead_map.find(hot_tower);
 		    if (it != emcal_hot_dead_map.end()) { continue; }
-			*/
-			h_2D_emcal_calib->Fill(m_simtwr_cemc_ieta[i], m_simtwr_cemc_iphi[i], m_simtwr_cemc_e[i]*vz_weight);
-			h_2D_emcal_calibT->Fill(m_simtwr_cemc_ieta[i], m_simtwr_cemc_iphi[i], m_simtwr_cemc_e[i]*vz_weight/cosh(m_simtwr_cemc_eta[i]));
-			emcale += m_simtwr_cemc_e[i]/cosh(m_simtwr_cemc_eta[i]); 
-			h_emcal->Fill(m_simtwr_cemc_e[i]/cosh(m_simtwr_cemc_eta[i]), vz_weight);
-			h_eT_emcal->Fill(m_simtwr_cemc_eta[i],m_simtwr_cemc_e[i]*vz_weight/cosh(m_simtwr_cemc_eta[i]));
+			if (!dataormc && zs == 1 && m_simtwr_cemc_zs_adc[i] < zs_value) {
+				float zs_e = 0; // = m_simtwr_cemc_zs_e[i]; 
+				if (em_zs_calib[m_simtwr_cemc_ieta[i]][m_simtwr_cemc_iphi[i]] == 0) {
+					h_em_zero_zscross->Fill(m_simtwr_cemc_ieta[i], m_simtwr_cemc_iphi[i]);
+				} else {
+					zs_e = m_simtwr_cemc_zs_e[i]/em_zs_calib[m_simtwr_cemc_ieta[i]][m_simtwr_cemc_iphi[i]];
+				}
+				h_2D_emcal_calib->Fill(m_simtwr_cemc_ieta[i], m_simtwr_cemc_iphi[i], zs_e*vz_weight);
+				h_2D_emcal_calibT->Fill(m_simtwr_cemc_ieta[i], m_simtwr_cemc_iphi[i], zs_e*vz_weight/cosh(m_simtwr_cemc_eta[i]));
+				emcale += zs_e/cosh(m_simtwr_cemc_eta[i]); 
+				h_emcal->Fill(zs_e/cosh(m_simtwr_cemc_eta[i]), vz_weight);
+				h_eT_emcal->Fill(m_simtwr_cemc_eta[i],zs_e*vz_weight/cosh(m_simtwr_cemc_eta[i]));
+			} else if (!dataormc && zs == 2 && m_simtwr_cemc_zs_adc[i] < zs_value && m_simtwr_cemc_zs_adc[i] > -1.0*zs_value) {
+				//float zs_e = m_simtwr_cemc_zs_e[i]; 
+				float zs_e = m_simtwr_cemc_zs_e[i]*em_zs_calib[m_simtwr_cemc_ieta[i]][m_simtwr_cemc_iphi[i]];
+				h_2D_emcal_calib->Fill(m_simtwr_cemc_ieta[i], m_simtwr_cemc_iphi[i], zs_e*vz_weight);
+				h_2D_emcal_calibT->Fill(m_simtwr_cemc_ieta[i], m_simtwr_cemc_iphi[i], zs_e*vz_weight/cosh(m_simtwr_cemc_eta[i]));
+				emcale += zs_e/cosh(m_simtwr_cemc_eta[i]); 
+				h_emcal->Fill(zs_e/cosh(m_simtwr_cemc_eta[i]), vz_weight);
+				h_eT_emcal->Fill(m_simtwr_cemc_eta[i],zs_e*vz_weight/cosh(m_simtwr_cemc_eta[i]));
+			} else {
+				if (!dataormc && time && (m_simtwr_cemc_time[i] < -2 || m_simtwr_cemc_time[i] > 2)) { continue; }
+				h_2D_emcal_calib->Fill(m_simtwr_cemc_ieta[i], m_simtwr_cemc_iphi[i], m_simtwr_cemc_e[i]*vz_weight);
+				h_2D_emcal_calibT->Fill(m_simtwr_cemc_ieta[i], m_simtwr_cemc_iphi[i], m_simtwr_cemc_e[i]*vz_weight/cosh(m_simtwr_cemc_eta[i]));
+				emcale += m_simtwr_cemc_e[i]/cosh(m_simtwr_cemc_eta[i]); 
+				h_emcal->Fill(m_simtwr_cemc_e[i]/cosh(m_simtwr_cemc_eta[i]), vz_weight);
+				h_eT_emcal->Fill(m_simtwr_cemc_eta[i],m_simtwr_cemc_e[i]*vz_weight/cosh(m_simtwr_cemc_eta[i]));
+			}
 		}
 
 		for (int i = 0; i < m_simtwrmult_ihcal; i++) {
-			/* // changed for MC testing 
-			//if (m_simtwr_ihcal_e[i] < 0.005) { continue; } // 10 ADC cut 
 			std::tuple<int, int> hot_tower = std::make_tuple(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i]);
 		    auto it = ihcal_hot_dead_map.find(hot_tower);
 		    if (it != ihcal_hot_dead_map.end()) { continue; }
-		    */
-			h_2D_ihcal_calib->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_e[i]*vz_weight);
-			h_2D_ihcal_calibT->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_e[i]*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
-			ihcale += m_simtwr_ihcal_e[i]/cosh(m_simtwr_ihcal_eta[i]); 
-			h_ihcal->Fill(m_simtwr_ihcal_e[i]/cosh(m_simtwr_ihcal_eta[i]), vz_weight);
-			h_eT_ihcal->Fill(m_simtwr_ihcal_eta[i],m_simtwr_ihcal_e[i]*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
+		    if (!dataormc && zs == 1 && m_simtwr_ihcal_zs_adc[i] < zs_value) { 
+		    	float zs_e = 0; // m_simtwr_ihcal_zs_e[i]; 
+				if (ih_zs_calib[m_simtwr_ihcal_ieta[i]][m_simtwr_ihcal_iphi[i]] == 0) {
+					h_ih_zero_zscross->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i]);
+				} else {
+					zs_e = m_simtwr_ihcal_zs_e[i]/ih_zs_calib[m_simtwr_ihcal_ieta[i]][m_simtwr_ihcal_iphi[i]];
+				}
+				h_2D_ihcal_calib->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], zs_e*vz_weight);
+				h_2D_ihcal_calibT->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], zs_e*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
+				ihcale += zs_e/cosh(m_simtwr_ihcal_eta[i]); 
+				h_ihcal->Fill(zs_e/cosh(m_simtwr_ihcal_eta[i]), vz_weight);
+				h_eT_ihcal->Fill(m_simtwr_ihcal_eta[i],zs_e*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
+		    } else if (!dataormc && zs == 2 && m_simtwr_ihcal_zs_adc[i] < zs_value && m_simtwr_ihcal_zs_adc[i] > -1.0*zs_value) {
+		    	//float zs_e = m_simtwr_ihcal_zs_e[i]; 
+				float zs_e = m_simtwr_ihcal_zs_e[i]*ih_zs_calib[m_simtwr_ihcal_ieta[i]][m_simtwr_ihcal_iphi[i]];
+				h_2D_ihcal_calib->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], zs_e*vz_weight);
+				h_2D_ihcal_calibT->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], zs_e*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
+				ihcale += zs_e/cosh(m_simtwr_ihcal_eta[i]); 
+				h_ihcal->Fill(zs_e/cosh(m_simtwr_ihcal_eta[i]), vz_weight);
+				h_eT_ihcal->Fill(m_simtwr_ihcal_eta[i],zs_e*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
+			} else {
+				h_2D_ihcal_calib->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_e[i]*vz_weight);
+				h_2D_ihcal_calibT->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_e[i]*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
+				ihcale += m_simtwr_ihcal_e[i]/cosh(m_simtwr_ihcal_eta[i]); 
+				h_ihcal->Fill(m_simtwr_ihcal_e[i]/cosh(m_simtwr_ihcal_eta[i]), vz_weight);
+				h_eT_ihcal->Fill(m_simtwr_ihcal_eta[i],m_simtwr_ihcal_e[i]*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
+			}
 		}
 
-
 		for (int i = 0; i < m_simtwrmult_ohcal; i++) {
-			/* // changed for MC testing 
-			//if (m_simtwr_ohcal_e[i] < 0.03) { continue; } // 10 ADC cut
-			//if (m_simtwr_ohcal_iphi[i] < 14 || m_simtwr_ohcal_iphi[i] > 19) { continue; }
 			std::tuple<int, int> hot_tower = std::make_tuple(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i]);
 		    auto it = ohcal_hot_dead_map.find(hot_tower);
 		    if (it != ohcal_hot_dead_map.end()) { continue; }
-		    */
-			h_2D_ohcal_calib->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_e[i]*vz_weight);
-			h_2D_ohcal_calibT->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_e[i]*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
-			ohcale += m_simtwr_ohcal_e[i]/cosh(m_simtwr_ohcal_eta[i]); 
-			h_ohcal->Fill(m_simtwr_ohcal_e[i]/cosh(m_simtwr_ohcal_eta[i]), vz_weight);
-			h_eT_ohcal->Fill(m_simtwr_ohcal_eta[i],m_simtwr_ohcal_e[i]*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
+		    if (!dataormc && zs == 1 && m_simtwr_ohcal_zs_adc[i] < zs_value) {
+		    	float zs_e = 0; // m_simtwr_ihcal_zs_e[i]; 
+				if (oh_zs_calib[m_simtwr_ohcal_ieta[i]][m_simtwr_ohcal_iphi[i]] == 0) {
+					h_oh_zero_zscross->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i]);
+				} else {
+					zs_e = m_simtwr_ohcal_zs_e[i]/oh_zs_calib[m_simtwr_ohcal_ieta[i]][m_simtwr_ohcal_iphi[i]];
+				}
+		    	h_2D_ohcal_calib->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], zs_e*vz_weight);
+				h_2D_ohcal_calibT->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], zs_e*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
+				ohcale += zs_e/cosh(m_simtwr_ohcal_eta[i]); 
+				h_ohcal->Fill(zs_e/cosh(m_simtwr_ohcal_eta[i]), vz_weight);
+				h_eT_ohcal->Fill(m_simtwr_ohcal_eta[i],zs_e*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
+		    } else if (!dataormc && zs == 2 && m_simtwr_ohcal_zs_adc[i] < zs_value && m_simtwr_ohcal_zs_adc[i] > 1.0*zs_value) {
+		    			    	//float zs_e = m_simtwr_ihcal_zs_e[i]; 
+				float zs_e = m_simtwr_ohcal_zs_e[i]*oh_zs_calib[m_simtwr_ohcal_ieta[i]][m_simtwr_ohcal_iphi[i]];
+		    	h_2D_ohcal_calib->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], zs_e*vz_weight);
+				h_2D_ohcal_calibT->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], zs_e*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
+				ohcale += zs_e/cosh(m_simtwr_ohcal_eta[i]); 
+				h_ohcal->Fill(zs_e/cosh(m_simtwr_ohcal_eta[i]), vz_weight);
+				h_eT_ohcal->Fill(m_simtwr_ohcal_eta[i],zs_e*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
+			} else {
+				h_2D_ohcal_calib->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_e[i]*vz_weight);
+				h_2D_ohcal_calibT->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_e[i]*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
+				ohcale += m_simtwr_ohcal_e[i]/cosh(m_simtwr_ohcal_eta[i]); 
+				h_ohcal->Fill(m_simtwr_ohcal_e[i]/cosh(m_simtwr_ohcal_eta[i]), vz_weight);
+				h_eT_ohcal->Fill(m_simtwr_ohcal_eta[i],m_simtwr_ohcal_e[i]*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
+			}
 		}
-
 		
 		totale = ihcale + ohcale;
 		h_event_energy->Fill(totale + emcale, vz_weight);
