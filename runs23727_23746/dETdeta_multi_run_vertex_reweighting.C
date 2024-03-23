@@ -26,9 +26,12 @@
 
 using namespace std;
 
-void dETdeta_vertex_reweighting(int runnumber, const char* generator) {	
+int good_runs[8] = {23727, 23735, 23737, 23738, 23739, 23740, 23743, 23745};
+//int good_runs[5] = {23727, 23735, 23737, 23743, 23745};
 
-	TFile *out = new TFile(TString::Format("dETdeta_vertex_reweight_run%d_%s_p011.root",runnumber, generator),"RECREATE");
+void dETdeta_multi_run_vertex_reweighting(const char* generator) {	
+
+	TFile *out = new TFile(TString::Format("dETdeta_vertex_reweight_run23727_23745_%s_p011.root", generator),"RECREATE");
 	
 	TH1F* h_vz_data = new TH1F("h_vz_data","",200,-50,50);
 	TH1F* h_vz_mc = new TH1F("h_vz_mc","",200,-50,50);
@@ -39,9 +42,11 @@ void dETdeta_vertex_reweighting(int runnumber, const char* generator) {
 	TChain mcchain("ttree");
 	TChain datachain("ttree");
     
+
     const char* dataInputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
-    for (int i = 0; i < 230; i++) {  
-    	TString dataWildcardPath = TString::Format("%sevents_p011_zs_%d_data_cor_%d.root", dataInputDirectory, runnumber, i);
+    for (int r = 0; r < 8; r++) { 
+    	TString dataWildcardPath = TString::Format("%sevents_test_emcal_calib_ihcal_status_%d_data_cor_*.root", dataInputDirectory, good_runs[r]);
+    	//TString dataWildcardPath = TString::Format("%sevents_p011_zs_%d_data_cor_*.root", dataInputDirectory, good_runs[r]);
     	datachain.Add(dataWildcardPath);
     }
 	TTreeReader datareader(&datachain);
@@ -52,14 +57,6 @@ void dETdeta_vertex_reweighting(int runnumber, const char* generator) {
 		    	TString mcWildcardPath = TString::Format("%sevents_20240110_run101_nopileup_mc_cor_%d.root", mcInputDirectory, i);
 		    	mcchain.Add(mcWildcardPath);
 		}
-	} else if (!strcmp(generator, "reweight_hijing")) {
-	    const char* inputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
-	    for (int i = 0; i < 2500; i++) { 
-    		//TString wildcardPath = TString::Format("%sevents_hijing_run101_reweighted_mc_cor_%d.root", inputDirectory, i);
-	    	//TString wildcardPath = TString::Format("%sevents_hijing_run101_not_reweighted_mc_cor_%d.root", inputDirectory, i);
-	    	TString wildcardPath = TString::Format("%sevents_20240316_run101_nopileup_mc_cor_%d.root", inputDirectory, i); //edited 3.15.24
-	    	mcchain.Add(wildcardPath);
-	    }
 	} else if (!strcmp(generator, "epos")) {
 		const char* mcInputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/eposrun/plugdoor_condor/";
 	    for (int i = 0; i < 1000; i++) {
@@ -87,10 +84,11 @@ void dETdeta_vertex_reweighting(int runnumber, const char* generator) {
 	// get data vertex distribution and mbd charge distribution
 	int eventnumber = 0;
     while (datareader.Next()) {
-    	if (eventnumber % 1000 == 0) cout << "data event " << eventnumber << endl;
+    	if (eventnumber % 10000 == 0) cout << "data event " << eventnumber << endl;
   		float mbde = 0;
   		eventnumber++;
   		if (!*m_isMinBias) { continue; }
+  		if (isnan(m_vtx[2])) { continue; }
   		h_vz_data->Fill(m_vtx[2]);
 
   		for (int i = 0; i < *m_sectormb; i++) {
@@ -101,7 +99,7 @@ void dETdeta_vertex_reweighting(int runnumber, const char* generator) {
 	eventnumber = 0;
 	// get mc vertex distribution and mbd charge distribution
 	while (mcreader.Next()) {
-    	if (eventnumber % 1000 == 0) cout << "mc event " << eventnumber << endl;
+    	if (eventnumber % 10000 == 0) cout << "mc event " << eventnumber << endl;
   		float mbde = 0;
   		eventnumber++;
   		h_vz_mc->Fill(track_vtx[2]);

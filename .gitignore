@@ -1,2 +1,3 @@
 *.root
 runs23727_23746/*.root
+pedestal_subtraction/*.root

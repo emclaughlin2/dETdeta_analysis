@@ -26,8 +26,8 @@
 
 using namespace std;
 
-std::set<std::tuple<int, int>> emcal_hot_dead_map = {{77,186},{79,187}};
-std::set<std::tuple<int, int>> ihcal_hot_dead_map = {{8,32},{7,51}};
+std::set<std::tuple<int, int>> emcal_hot_dead_map;
+std::set<std::tuple<int, int>> ihcal_hot_dead_map;
 std::set<std::tuple<int, int>> ohcal_hot_dead_map;
 
 double eta_spread_ihcal[24] = {0.0};
@@ -35,13 +35,13 @@ double eta_spread_ohcal[24] = {0.0};
 long eta_spread_ihcal_count[24] = {0};
 long eta_spread_ohcal_count[24] = {0};
 
-// 23737, 23743 and 23745 lose seb00 halfway through running - this has been dealt with
-// ihcal has a lot of hot towers for runs 23737, 23738, 23739, 23740
+int good_runs[7] = {23727, 23735, 23737, 23738, 23739, 23743, 23745};
+//int good_runs[5] = {23727, 23735, 23737, 23743, 23745};
 
-void dETdeta_hot_dead_map(int runnumber = 23727, string optflag = "", int minus_z = -2, int plus_z = 2) {  
+void dETdeta_multi_run_hot_dead_map(string optflag = "", int minus_z = -2, int plus_z = 2) {  
 
     if (optflag != "") optflag += "_";
-    TFile *out = new TFile(Form("run%d_hotdeadmap_z_%s%d_%d_new_status.root", runnumber, optflag.c_str(), minus_z, plus_z),"RECREATE");
+    TFile *out = new TFile(Form("run23727_23745_hotdeadmap_z_%s%d_%d_new_status.root", optflag.c_str(), minus_z, plus_z),"RECREATE");
 
     vector<int> emcal_hot_dead_ieta;
     vector<int> emcal_hot_dead_iphi;
@@ -94,10 +94,12 @@ void dETdeta_hot_dead_map(int runnumber = 23727, string optflag = "", int minus_
     chain2.SetBranchAddress("ohetacor", m_simtwr_ohcal_eta);
     
     const char* inputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
-    //TString wildcardPath = TString::Format("%sevents_p011_zs_%d_%sdata_cor_*.root", inputDirectory, runnumber, optflag.c_str());
-    TString wildcardPath = TString::Format("%sevents_test_emcal_calib_ihcal_status_%d_data_cor_*.root", inputDirectory, runnumber);
-    chain.Add(wildcardPath);
-    chain2.Add(wildcardPath);
+    for (int r = 0; r < 7; r++) { 
+        //TString wildcardPath = TString::Format("%sevents_p011_zs_%d_%sdata_cor_*.root", inputDirectory, good_runs[r], optflag.c_str());
+        TString wildcardPath = TString::Format("%sevents_test_emcal_calib_ihcal_status_%d_data_cor_*.root", inputDirectory, good_runs[r]);
+        chain.Add(wildcardPath);
+        chain2.Add(wildcardPath);
+    }
 
     Long64_t nEntries = chain.GetEntries();
     std::cout << "hot tower tree entries " << nEntries << std::endl;
@@ -157,12 +159,13 @@ void dETdeta_hot_dead_map(int runnumber = 23727, string optflag = "", int minus_
         ohcal_hot_dead_iphi.push_back(get<1>(tuple));
     }
 
-    
+
     nEntries = chain2.GetEntries();
     std::cout << "tower tree entries " << nEntries << std::endl;
 
     for (Long64_t entry = 0; entry < nEntries; entry++) {
         chain2.GetEntry(entry);
+        if (entry % 10000 == 0) std::cout << entry << std::endl;
 
         if (isnan(m_vtx[2])) { continue; }
         if (m_vtx[2] < minus_z || m_vtx[2] > plus_z) { continue; }
@@ -188,7 +191,7 @@ void dETdeta_hot_dead_map(int runnumber = 23727, string optflag = "", int minus_
         ihcal_eta_bin_centers.push_back(eta_spread_ihcal[i]/eta_spread_ihcal_count[i]);
         ohcal_eta_bin_centers.push_back(eta_spread_ohcal[i]/eta_spread_ohcal_count[i]);
     }
-    
+
 
     T->Fill();
     
