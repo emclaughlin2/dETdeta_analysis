@@ -28,7 +28,7 @@ using namespace std;
 
 void dETdeta_vertex_reweighting(int runnumber, const char* generator) {	
 
-	TFile *out = new TFile(TString::Format("dETdeta_vertex_reweight_run%d_%s_p011.root",runnumber, generator),"RECREATE");
+	TFile *out = new TFile(TString::Format("dETdeta_vertex_reweight_run%d_%s_new_status.root",runnumber, generator),"RECREATE");
 	
 	TH1F* h_vz_data = new TH1F("h_vz_data","",200,-50,50);
 	TH1F* h_vz_mc = new TH1F("h_vz_mc","",200,-50,50);
@@ -40,10 +40,8 @@ void dETdeta_vertex_reweighting(int runnumber, const char* generator) {
 	TChain datachain("ttree");
     
     const char* dataInputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
-    for (int i = 0; i < 230; i++) {  
-    	TString dataWildcardPath = TString::Format("%sevents_p011_zs_%d_data_cor_%d.root", dataInputDirectory, runnumber, i);
-    	datachain.Add(dataWildcardPath);
-    }
+    TString dataWildcardPath = TString::Format("%sevents_new_emcal_calib_ihcal_status_%d_data_cor_*.root", dataInputDirectory, runnumber);
+    datachain.Add(dataWildcardPath);
 	TTreeReader datareader(&datachain);
 
 	if (!strcmp(generator, "hijing")) {
@@ -71,6 +69,18 @@ void dETdeta_vertex_reweighting(int runnumber, const char* generator) {
 	    for (int i = 0; i < 1000; i++) {
 	    	TString mcWildcardPath = TString::Format("%sOutDir%d/ampt_sim_output.root", mcInputDirectory, i);
 	    	mcchain.Add(mcWildcardPath);
+	    }
+	} else if (!strcmp(generator, "reweight_ampt")) {
+	    const char* inputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
+	    for (int i = 0; i < 500; i++) { 
+    		TString wildcardPath = TString::Format("%sevents_ampt_reweighted_nopoletipdoors_ampt_cor_%d.root", inputDirectory, i);
+	    	mcchain.Add(wildcardPath);
+	    }
+	} else if (!strcmp(generator, "reweight_epos")) {
+	    const char* inputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
+	    for (int i = 0; i < 500; i++) { 
+    		TString wildcardPath = TString::Format("%sevents_epos_reweighted_nopoletipdoors_epos_cor_%d.root", inputDirectory, i);
+	    	mcchain.Add(wildcardPath);
 	    }
 	}
 	TTreeReader mcreader(&mcchain);

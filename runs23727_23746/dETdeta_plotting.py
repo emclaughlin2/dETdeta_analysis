@@ -6,12 +6,13 @@ import pdb
 
 tag = 'p011'
 cent = '0-5'
-hijingfile = 'dETdeta_analysis_23727_particle_reweighting_nozs_mc_reweight_0-5_hijing.root'
+hijingfile = 'dETdeta_analysis_23727_new_reweight_3_23_nozs_mc_reweight_'+cent+'_reweight_hijing.root'
 #hijingfile = 'dETdeta_analysis_23727_'+tag+'_nozs_mc_reweight_'+cent+'_hijing.root'
-datafile = 'dETdeta_analysis_23727_'+tag+'_zs_30ADC_data_noweight_'+cent+'.root'
+datafile = 'dETdeta_analysis_23727_new_emcal_calib_3_25_zs_30ADC_data_noweight_'+cent+'.root'
+#datafile = 'dETdeta_analysis_23727_'+tag+'_zs_30ADC_data_noweight_'+cent+'.root'
 eposfile = 'dETdeta_analysis_23727_'+tag+'_nozs_mc_reweight_'+cent+'_epos.root'
 amptfile = 'dETdeta_analysis_23727_'+tag+'_nozs_mc_reweight_'+cent+'_ampt.root'
-outfile = 'dETdeta_plots_w_hijing_reweight_'+cent+'_'+tag+'.root'
+outfile = 'dETdeta_plots_w_hijing_reweight_'+tag+'_new_'+cent+'.root'
 
 runlegend = 'Run 23727-'+tag+' '+cent+'% cent.'
 
@@ -345,6 +346,12 @@ hijing_canvas.SetLeftMargin(0.15)
 hijing_leg.SetBorderSize(0)
 h_eT_truth.GetYaxis().SetRangeUser(low_bound[cent],high_bound[cent])
 h_eT_truth.GetXaxis().SetRangeUser(-1.05,1.1)
+emcal_detdeta_hijing.GetYaxis().SetRangeUser(low_bound[cent],high_bound[cent])
+emcal_detdeta_hijing.GetXaxis().SetRangeUser(-1.05,1.1)
+ihcal_detdeta_hijing.GetYaxis().SetRangeUser(low_bound[cent],high_bound[cent])
+ihcal_detdeta_hijing.GetXaxis().SetRangeUser(-1.05,1.1)
+ohcal_detdeta_hijing.GetYaxis().SetRangeUser(low_bound[cent],high_bound[cent])
+ohcal_detdeta_hijing.GetXaxis().SetRangeUser(-1.05,1.1)
 h_eT_truth.SetStats(0)
 h_eT_truth.SetYTitle("dE_{T}/d#eta [GeV]")
 h_eT_truth.SetXTitle("#eta")
@@ -390,6 +397,12 @@ epos_canvas.SetLeftMargin(0.15)
 epos_leg.SetBorderSize(0)
 h_eT_truth_epos.GetYaxis().SetRangeUser(low_bound[cent],high_bound[cent])
 h_eT_truth_epos.GetXaxis().SetRangeUser(-1.05,1.1)
+emcal_detdeta_epos.GetYaxis().SetRangeUser(low_bound[cent],high_bound[cent])
+emcal_detdeta_epos.GetXaxis().SetRangeUser(-1.05,1.1)
+ihcal_detdeta_epos.GetYaxis().SetRangeUser(low_bound[cent],high_bound[cent])
+ihcal_detdeta_epos.GetXaxis().SetRangeUser(-1.05,1.1)
+ohcal_detdeta_epos.GetYaxis().SetRangeUser(low_bound[cent],high_bound[cent])
+ohcal_detdeta_epos.GetXaxis().SetRangeUser(-1.05,1.1)
 h_eT_truth_epos.SetStats(0)
 h_eT_truth_epos.SetYTitle("dE_{T}/d#eta [GeV]")
 h_eT_truth_epos.SetXTitle("#eta")
@@ -435,6 +448,12 @@ ampt_canvas.SetLeftMargin(0.15)
 ampt_leg.SetBorderSize(0)
 h_eT_truth_ampt.GetYaxis().SetRangeUser(low_bound[cent],high_bound[cent])
 h_eT_truth_ampt.GetXaxis().SetRangeUser(-1.05,1.1)
+emcal_detdeta_ampt.GetYaxis().SetRangeUser(low_bound[cent],high_bound[cent])
+emcal_detdeta_ampt.GetXaxis().SetRangeUser(-1.05,1.1)
+ihcal_detdeta_ampt.GetYaxis().SetRangeUser(low_bound[cent],high_bound[cent])
+ihcal_detdeta_ampt.GetXaxis().SetRangeUser(-1.05,1.1)
+ohcal_detdeta_ampt.GetYaxis().SetRangeUser(low_bound[cent],high_bound[cent])
+ohcal_detdeta_ampt.GetXaxis().SetRangeUser(-1.05,1.1)
 h_eT_truth_ampt.SetStats(0)
 h_eT_truth_ampt.SetYTitle("dE_{T}/d#eta [GeV]")
 h_eT_truth_ampt.SetXTitle("#eta")
@@ -471,4 +490,15 @@ ohcal_corr_canvas.Write()
 hijing_canvas.Write()
 epos_canvas.Write()
 ampt_canvas.Write()
+
+emcal_detdeta_hijing.Write()
+emcal_detdeta_epos.Write()
+emcal_detdeta_ampt.Write()
+ihcal_detdeta_hijing.Write()
+ihcal_detdeta_epos.Write()
+ihcal_detdeta_ampt.Write()
+ohcal_detdeta_hijing.Write()
+ohcal_detdeta_epos.Write()
+ohcal_detdeta_ampt.Write()
+
 file.Close()

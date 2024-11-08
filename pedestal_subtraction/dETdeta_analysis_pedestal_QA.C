@@ -114,7 +114,8 @@ void dETdeta_analysis_pedestal_QA(int runnumber = 23727, const char* opt_tag = "
     float m_simtwr_ohcal_chi2[ohcalSize];
 
      // Set branch addresses
-    int use_emcal = 0;
+    int use_emcal = 1;
+    int use_hcal = 0;
     if (use_emcal) {
 	    chain.SetBranchAddress("sectorem", &m_simtwrmult_cemc);
 	    chain.SetBranchAddress("emcalen", m_simtwr_cemc_e);
@@ -127,28 +128,29 @@ void dETdeta_analysis_pedestal_QA(int runnumber = 23727, const char* opt_tag = "
 		chain.SetBranchAddress("emcalt", m_simtwr_cemc_time);
 		chain.SetBranchAddress("emchi2", m_simtwr_cemc_chi2);
 	}
+	if (use_hcal) {
+	    chain.SetBranchAddress("sectorih", &m_simtwrmult_ihcal);
+	    chain.SetBranchAddress("ihcalen", m_simtwr_ihcal_e);
+	    chain.SetBranchAddress("ihcaletabin", m_simtwr_ihcal_ieta);
+	    chain.SetBranchAddress("ihcalphibin", m_simtwr_ihcal_iphi);
+	    chain.SetBranchAddress("ihetacor", m_simtwr_ihcal_eta);
+	    chain.SetBranchAddress("ihcalzs", m_simtwr_ihcal_zs_e);
+	    chain.SetBranchAddress("ihcaladc", m_simtwr_ihcal_adc);
+	    chain.SetBranchAddress("ihcalzsadc", m_simtwr_ihcal_zs_adc);
+	    chain.SetBranchAddress("ihcalt", m_simtwr_ihcal_time);
+	    chain.SetBranchAddress("ihchi2", m_simtwr_ihcal_chi2);
 
-    chain.SetBranchAddress("sectorih", &m_simtwrmult_ihcal);
-    chain.SetBranchAddress("ihcalen", m_simtwr_ihcal_e);
-    chain.SetBranchAddress("ihcaletabin", m_simtwr_ihcal_ieta);
-    chain.SetBranchAddress("ihcalphibin", m_simtwr_ihcal_iphi);
-    chain.SetBranchAddress("ihetacor", m_simtwr_ihcal_eta);
-    chain.SetBranchAddress("ihcalzs", m_simtwr_ihcal_zs_e);
-    chain.SetBranchAddress("ihcaladc", m_simtwr_ihcal_adc);
-    chain.SetBranchAddress("ihcalzsadc", m_simtwr_ihcal_zs_adc);
-    chain.SetBranchAddress("ihcalt", m_simtwr_ihcal_time);
-    chain.SetBranchAddress("ihchi2", m_simtwr_ihcal_chi2);
-
-    chain.SetBranchAddress("sectoroh", &m_simtwrmult_ohcal);
-    chain.SetBranchAddress("ohcalen", m_simtwr_ohcal_e);
-    chain.SetBranchAddress("ohcaletabin", m_simtwr_ohcal_ieta);
-    chain.SetBranchAddress("ohcalphibin", m_simtwr_ohcal_iphi);
-    chain.SetBranchAddress("ohetacor", m_simtwr_ohcal_eta);
-	chain.SetBranchAddress("ohcalzs", m_simtwr_ohcal_zs_e);
-    chain.SetBranchAddress("ohcaladc", m_simtwr_ohcal_adc);
-    chain.SetBranchAddress("ohcalzsadc", m_simtwr_ohcal_zs_adc);
-    chain.SetBranchAddress("ohcalt", m_simtwr_ohcal_time);
-    chain.SetBranchAddress("ohchi2", m_simtwr_ohcal_chi2);
+	    chain.SetBranchAddress("sectoroh", &m_simtwrmult_ohcal);
+	    chain.SetBranchAddress("ohcalen", m_simtwr_ohcal_e);
+	    chain.SetBranchAddress("ohcaletabin", m_simtwr_ohcal_ieta);
+	    chain.SetBranchAddress("ohcalphibin", m_simtwr_ohcal_iphi);
+	    chain.SetBranchAddress("ohetacor", m_simtwr_ohcal_eta);
+		chain.SetBranchAddress("ohcalzs", m_simtwr_ohcal_zs_e);
+	    chain.SetBranchAddress("ohcaladc", m_simtwr_ohcal_adc);
+	    chain.SetBranchAddress("ohcalzsadc", m_simtwr_ohcal_zs_adc);
+	    chain.SetBranchAddress("ohcalt", m_simtwr_ohcal_time);
+	    chain.SetBranchAddress("ohchi2", m_simtwr_ohcal_chi2);
+	}
 
 	int eventnumber = 0;
 	float totalweights = 0.0;
@@ -186,23 +188,24 @@ void dETdeta_analysis_pedestal_QA(int runnumber = 23727, const char* opt_tag = "
 				emcale += m_simtwr_cemc_e[i]/cosh(m_simtwr_cemc_eta[i]); 
 			}
 		}
+		if (use_hcal) {
+			for (int i = 0; i < m_simtwrmult_ihcal; i++) {
+				std::tuple<int, int> hot_tower = std::make_tuple(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i]);
+			    auto it = ihcal_hot_dead_map.find(hot_tower);
+			    if (it != ihcal_hot_dead_map.end()) { continue; }
+				h_2D_ihcal_calib->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_e[i]*vz_weight);
+				h_2D_ihcal_calibT->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_e[i]*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
+				h_2D_ihcal_chi2->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_chi2[i]);
+			}
 
-		for (int i = 0; i < m_simtwrmult_ihcal; i++) {
-			std::tuple<int, int> hot_tower = std::make_tuple(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i]);
-		    auto it = ihcal_hot_dead_map.find(hot_tower);
-		    if (it != ihcal_hot_dead_map.end()) { continue; }
-			h_2D_ihcal_calib->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_e[i]*vz_weight);
-			h_2D_ihcal_calibT->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_e[i]*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
-			h_2D_ihcal_chi2->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_chi2[i]);
-		}
-
-		for (int i = 0; i < m_simtwrmult_ohcal; i++) {
-			std::tuple<int, int> hot_tower = std::make_tuple(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i]);
-		    auto it = ohcal_hot_dead_map.find(hot_tower);
-		    if (it != ohcal_hot_dead_map.end()) { continue; }
-	    	h_2D_ohcal_calib->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_e[i]*vz_weight);
-			h_2D_ohcal_calibT->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_e[i]*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
-			h_2D_ohcal_chi2->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_chi2[i]);
+			for (int i = 0; i < m_simtwrmult_ohcal; i++) {
+				std::tuple<int, int> hot_tower = std::make_tuple(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i]);
+			    auto it = ohcal_hot_dead_map.find(hot_tower);
+			    if (it != ohcal_hot_dead_map.end()) { continue; }
+		    	h_2D_ohcal_calib->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_e[i]*vz_weight);
+				h_2D_ohcal_calibT->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_e[i]*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
+				h_2D_ohcal_chi2->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_chi2[i]);
+			}
 		}
 		
 	}
@@ -211,18 +214,30 @@ void dETdeta_analysis_pedestal_QA(int runnumber = 23727, const char* opt_tag = "
 		h_2D_emcal_calib->Scale(1.0/totalweights);
 		h_2D_emcal_calibT->Scale(1.0/totalweights);
 	}
-	h_2D_ihcal_calib->Scale(1.0/totalweights);
-	h_2D_ihcal_calibT->Scale(1.0/totalweights);
-	h_2D_ohcal_calib->Scale(1.0/totalweights);
-	h_2D_ohcal_calibT->Scale(1.0/totalweights);
-
-	for (int i = 0; i < 24; i++) {
-		for (int j = 0; j < 64; j++) {
-			if (h_2D_ihcal_chi2->GetBinContent(h_2D_ihcal_chi2->FindBin(i,j)) > 10) { 
-				std::cout << "IHCal ieta " << i << " iphi " << j << " mean chi2 " << h_2D_ihcal_chi2->GetBinContent(h_2D_ihcal_chi2->FindBin(i,j)) << std::endl;
+	if (use_hcal) {
+		h_2D_ihcal_calib->Scale(1.0/totalweights);
+		h_2D_ihcal_calibT->Scale(1.0/totalweights);
+		h_2D_ohcal_calib->Scale(1.0/totalweights);
+		h_2D_ohcal_calibT->Scale(1.0/totalweights);
+	}
+	if (use_hcal) {
+		for (int i = 0; i < 24; i++) {
+			for (int j = 0; j < 64; j++) {
+				if (h_2D_ihcal_chi2->GetBinContent(h_2D_ihcal_chi2->FindBin(i,j)) > 10) { 
+					std::cout << "IHCal ieta " << i << " iphi " << j << " mean chi2 " << h_2D_ihcal_chi2->GetBinContent(h_2D_ihcal_chi2->FindBin(i,j)) << std::endl;
+				}
+				if (h_2D_ohcal_chi2->GetBinContent(h_2D_ohcal_chi2->FindBin(i,j)) > 10) { 
+					std::cout << "OHCal ieta " << i << " iphi " << j << " mean chi2 " << h_2D_ohcal_chi2->GetBinContent(h_2D_ohcal_chi2->FindBin(i,j)) << std::endl;
+				}
 			}
-			if (h_2D_ohcal_chi2->GetBinContent(h_2D_ohcal_chi2->FindBin(i,j)) > 10) { 
-				std::cout << "OHCal ieta " << i << " iphi " << j << " mean chi2 " << h_2D_ohcal_chi2->GetBinContent(h_2D_ohcal_chi2->FindBin(i,j)) << std::endl;
+		}
+	}
+	if (use_emcal) {
+		for (int i = 0; i < 96; i++) {
+			for (int j = 0; j < 256; j++) {
+				if (h_2D_emcal_chi2->GetBinContent(h_2D_emcal_chi2->FindBin(i,j)) > 10) { 
+					std::cout << "EMCal ieta " << i << " iphi " << j << " mean chi2 " << h_2D_emcal_chi2->GetBinContent(h_2D_emcal_chi2->FindBin(i,j)) << std::endl;
+				}	
 			}
 		}
 	}

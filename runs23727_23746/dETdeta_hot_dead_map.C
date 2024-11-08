@@ -95,7 +95,7 @@ void dETdeta_hot_dead_map(int runnumber = 23727, string optflag = "", int minus_
     
     const char* inputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
     //TString wildcardPath = TString::Format("%sevents_p011_zs_%d_%sdata_cor_*.root", inputDirectory, runnumber, optflag.c_str());
-    TString wildcardPath = TString::Format("%sevents_test_emcal_calib_ihcal_status_%d_data_cor_*.root", inputDirectory, runnumber);
+    TString wildcardPath = TString::Format("%sevents_new_emcal_calib_ihcal_status_%d_data_cor_*.root", inputDirectory, runnumber);
     chain.Add(wildcardPath);
     chain2.Add(wildcardPath);
 

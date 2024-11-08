@@ -1,0 +1,490 @@
+   ------------------------------------------------------------------
+  | Welcome to ROOT 6.26/06                        https://root.cern |
+  | (c) 1995-2021, The ROOT Team; conception: R. Brun, F. Rademakers |
+  | Built for linuxx8664gcc on Jul 28 2022, 18:08:51                 |
+  | From tags/v6-26-06@v6-26-06                                      |
+  | With g++ (GCC) 12.1.0                                            |
+  | Try '.help', '.demo', '.license', '.credits', '.quit'/'.q'       |
+   ------------------------------------------------------------------
+
+
+Processing dETdeta_analysis.C(23737,"",-20,20,0,0,1,0,5,1,30,0,"4_4_24")...
+centrality_bins
+0 1 17.9039 31.7068 49.3399 73.6028 105.867 146.53 196.697 256.257 327.227 409.004 502.23 611.423 734.319 878.478 1045.8 1235.28 1452.78 5999.5 
+55865
+event 0
+event 1000
+event 2000
+event 3000
+event 4000
+event 5000
+event 6000
+event 7000
+event 8000
+event 9000
+event 10000
+event 11000
+event 12000
+event 13000
+event 14000
+event 15000
+event 16000
+event 17000
+event 18000
+event 19000
+event 20000
+event 21000
+event 22000
+event 23000
+event 24000
+event 25000
+event 26000
+event 27000
+event 28000
+event 29000
+event 30000
+event 31000
+event 32000
+event 33000
+event 34000
+event 35000
+event 36000
+event 37000
+event 38000
+event 39000
+event 40000
+event 41000
+event 42000
+event 43000
+event 44000
+event 45000
+event 46000
+event 47000
+event 48000
+event 49000
+event 50000
+event 51000
+event 52000
+event 53000
+event 54000
+event 55000
+   ------------------------------------------------------------------
+  | Welcome to ROOT 6.26/06                        https://root.cern |
+  | (c) 1995-2021, The ROOT Team; conception: R. Brun, F. Rademakers |
+  | Built for linuxx8664gcc on Jul 28 2022, 18:08:51                 |
+  | From tags/v6-26-06@v6-26-06                                      |
+  | With g++ (GCC) 12.1.0                                            |
+  | Try '.help', '.demo', '.license', '.credits', '.quit'/'.q'       |
+   ------------------------------------------------------------------
+
+
+Processing dETdeta_analysis.C(23737,"",-20,20,0,0,1,5,10,1,30,0,"4_4_24")...
+centrality_bins
+0 1 17.9039 31.7068 49.3399 73.6028 105.867 146.53 196.697 256.257 327.227 409.004 502.23 611.423 734.319 878.478 1045.8 1235.28 1452.78 5999.5 
+55865
+event 0
+event 1000
+event 2000
+event 3000
+event 4000
+event 5000
+event 6000
+event 7000
+event 8000
+event 9000
+event 10000
+event 11000
+event 12000
+event 13000
+event 14000
+event 15000
+event 16000
+event 17000
+event 18000
+event 19000
+event 20000
+event 21000
+event 22000
+event 23000
+event 24000
+event 25000
+event 26000
+event 27000
+event 28000
+event 29000
+event 30000
+event 31000
+event 32000
+event 33000
+event 34000
+event 35000
+event 36000
+event 37000
+event 38000
+event 39000
+event 40000
+event 41000
+event 42000
+event 43000
+event 44000
+event 45000
+event 46000
+event 47000
+event 48000
+event 49000
+event 50000
+event 51000
+event 52000
+event 53000
+event 54000
+event 55000
+   ------------------------------------------------------------------
+  | Welcome to ROOT 6.26/06                        https://root.cern |
+  | (c) 1995-2021, The ROOT Team; conception: R. Brun, F. Rademakers |
+  | Built for linuxx8664gcc on Jul 28 2022, 18:08:51                 |
+  | From tags/v6-26-06@v6-26-06                                      |
+  | With g++ (GCC) 12.1.0                                            |
+  | Try '.help', '.demo', '.license', '.credits', '.quit'/'.q'       |
+   ------------------------------------------------------------------
+
+
+Processing dETdeta_analysis.C(23737,"",-20,20,0,0,1,10,20,1,30,0,"4_4_24")...
+centrality_bins
+0 1 17.9039 31.7068 49.3399 73.6028 105.867 146.53 196.697 256.257 327.227 409.004 502.23 611.423 734.319 878.478 1045.8 1235.28 1452.78 5999.5 
+55865
+event 0
+event 1000
+event 2000
+event 3000
+event 4000
+event 5000
+event 6000
+event 7000
+event 8000
+event 9000
+event 10000
+event 11000
+event 12000
+event 13000
+event 14000
+event 15000
+event 16000
+event 17000
+event 18000
+event 19000
+event 20000
+event 21000
+event 22000
+event 23000
+event 24000
+event 25000
+event 26000
+event 27000
+event 28000
+event 29000
+event 30000
+event 31000
+event 32000
+event 33000
+event 34000
+event 35000
+event 36000
+event 37000
+event 38000
+event 39000
+event 40000
+event 41000
+event 42000
+event 43000
+event 44000
+event 45000
+event 46000
+event 47000
+event 48000
+event 49000
+event 50000
+event 51000
+event 52000
+event 53000
+event 54000
+event 55000
+   ------------------------------------------------------------------
+  | Welcome to ROOT 6.26/06                        https://root.cern |
+  | (c) 1995-2021, The ROOT Team; conception: R. Brun, F. Rademakers |
+  | Built for linuxx8664gcc on Jul 28 2022, 18:08:51                 |
+  | From tags/v6-26-06@v6-26-06                                      |
+  | With g++ (GCC) 12.1.0                                            |
+  | Try '.help', '.demo', '.license', '.credits', '.quit'/'.q'       |
+   ------------------------------------------------------------------
+
+
+Processing dETdeta_analysis.C(23737,"",-20,20,0,0,1,20,30,1,30,0,"4_4_24")...
+centrality_bins
+0 1 17.9039 31.7068 49.3399 73.6028 105.867 146.53 196.697 256.257 327.227 409.004 502.23 611.423 734.319 878.478 1045.8 1235.28 1452.78 5999.5 
+55865
+event 0
+event 1000
+event 2000
+event 3000
+event 4000
+event 5000
+event 6000
+event 7000
+event 8000
+event 9000
+event 10000
+event 11000
+event 12000
+event 13000
+event 14000
+event 15000
+event 16000
+event 17000
+event 18000
+event 19000
+event 20000
+event 21000
+event 22000
+event 23000
+event 24000
+event 25000
+event 26000
+event 27000
+event 28000
+event 29000
+event 30000
+event 31000
+event 32000
+event 33000
+event 34000
+event 35000
+event 36000
+event 37000
+event 38000
+event 39000
+event 40000
+event 41000
+event 42000
+event 43000
+event 44000
+event 45000
+event 46000
+event 47000
+event 48000
+event 49000
+event 50000
+event 51000
+event 52000
+event 53000
+event 54000
+event 55000
+   ------------------------------------------------------------------
+  | Welcome to ROOT 6.26/06                        https://root.cern |
+  | (c) 1995-2021, The ROOT Team; conception: R. Brun, F. Rademakers |
+  | Built for linuxx8664gcc on Jul 28 2022, 18:08:51                 |
+  | From tags/v6-26-06@v6-26-06                                      |
+  | With g++ (GCC) 12.1.0                                            |
+  | Try '.help', '.demo', '.license', '.credits', '.quit'/'.q'       |
+   ------------------------------------------------------------------
+
+
+Processing dETdeta_analysis.C(23737,"",-20,20,0,0,1,30,40,1,30,0,"4_4_24")...
+centrality_bins
+0 1 17.9039 31.7068 49.3399 73.6028 105.867 146.53 196.697 256.257 327.227 409.004 502.23 611.423 734.319 878.478 1045.8 1235.28 1452.78 5999.5 
+55865
+event 0
+event 1000
+event 2000
+event 3000
+event 4000
+event 5000
+event 6000
+event 7000
+event 8000
+event 9000
+event 10000
+event 11000
+event 12000
+event 13000
+event 14000
+event 15000
+event 16000
+event 17000
+event 18000
+event 19000
+event 20000
+event 21000
+event 22000
+event 23000
+event 24000
+event 25000
+event 26000
+event 27000
+event 28000
+event 29000
+event 30000
+event 31000
+event 32000
+event 33000
+event 34000
+event 35000
+event 36000
+event 37000
+event 38000
+event 39000
+event 40000
+event 41000
+event 42000
+event 43000
+event 44000
+event 45000
+event 46000
+event 47000
+event 48000
+event 49000
+event 50000
+event 51000
+event 52000
+event 53000
+event 54000
+event 55000
+   ------------------------------------------------------------------
+  | Welcome to ROOT 6.26/06                        https://root.cern |
+  | (c) 1995-2021, The ROOT Team; conception: R. Brun, F. Rademakers |
+  | Built for linuxx8664gcc on Jul 28 2022, 18:08:51                 |
+  | From tags/v6-26-06@v6-26-06                                      |
+  | With g++ (GCC) 12.1.0                                            |
+  | Try '.help', '.demo', '.license', '.credits', '.quit'/'.q'       |
+   ------------------------------------------------------------------
+
+
+Processing dETdeta_analysis.C(23737,"",-20,20,0,0,1,40,50,1,30,0,"4_4_24")...
+centrality_bins
+0 1 17.9039 31.7068 49.3399 73.6028 105.867 146.53 196.697 256.257 327.227 409.004 502.23 611.423 734.319 878.478 1045.8 1235.28 1452.78 5999.5 
+55865
+event 0
+event 1000
+event 2000
+event 3000
+event 4000
+event 5000
+event 6000
+event 7000
+event 8000
+event 9000
+event 10000
+event 11000
+event 12000
+event 13000
+event 14000
+event 15000
+event 16000
+event 17000
+event 18000
+event 19000
+event 20000
+event 21000
+event 22000
+event 23000
+event 24000
+event 25000
+event 26000
+event 27000
+event 28000
+event 29000
+event 30000
+event 31000
+event 32000
+event 33000
+event 34000
+event 35000
+event 36000
+event 37000
+event 38000
+event 39000
+event 40000
+event 41000
+event 42000
+event 43000
+event 44000
+event 45000
+event 46000
+event 47000
+event 48000
+event 49000
+event 50000
+event 51000
+event 52000
+event 53000
+event 54000
+event 55000
+   ------------------------------------------------------------------
+  | Welcome to ROOT 6.26/06                        https://root.cern |
+  | (c) 1995-2021, The ROOT Team; conception: R. Brun, F. Rademakers |
+  | Built for linuxx8664gcc on Jul 28 2022, 18:08:51                 |
+  | From tags/v6-26-06@v6-26-06                                      |
+  | With g++ (GCC) 12.1.0                                            |
+  | Try '.help', '.demo', '.license', '.credits', '.quit'/'.q'       |
+   ------------------------------------------------------------------
+
+
+Processing dETdeta_analysis.C(23737,"",-20,20,0,0,1,50,60,1,30,0,"4_4_24")...
+centrality_bins
+0 1 17.9039 31.7068 49.3399 73.6028 105.867 146.53 196.697 256.257 327.227 409.004 502.23 611.423 734.319 878.478 1045.8 1235.28 1452.78 5999.5 
+55865
+event 0
+event 1000
+event 2000
+event 3000
+event 4000
+event 5000
+event 6000
+event 7000
+event 8000
+event 9000
+event 10000
+event 11000
+event 12000
+event 13000
+event 14000
+event 15000
+event 16000
+event 17000
+event 18000
+event 19000
+event 20000
+event 21000
+event 22000
+event 23000
+event 24000
+event 25000
+event 26000
+event 27000
+event 28000
+event 29000
+event 30000
+event 31000
+event 32000
+event 33000
+event 34000
+event 35000
+event 36000
+event 37000
+event 38000
+event 39000
+event 40000
+event 41000
+event 42000
+event 43000
+event 44000
+event 45000
+event 46000
+event 47000
+event 48000
+event 49000
+event 50000
+event 51000
+event 52000
+event 53000
+event 54000
+event 55000
