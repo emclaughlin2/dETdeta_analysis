@@ -1,0 +1,10 @@
+reweight_hijing, 0, 1, run14_with_npart, test_intermittant_ht
+reweight_hijing, 1, 2, run14_with_npart, test_intermittant_ht
+reweight_hijing, 2, 3, run14_with_npart, test_intermittant_ht
+reweight_hijing, 3, 4, run14_with_npart, test_intermittant_ht
+reweight_hijing, 4, 5, run14_with_npart, test_intermittant_ht
+reweight_hijing, 55, 56, run14_with_npart, test_intermittant_ht
+reweight_hijing, 56, 57, run14_with_npart, test_intermittant_ht
+reweight_hijing, 57, 58, run14_with_npart, test_intermittant_ht
+reweight_hijing, 58, 59, run14_with_npart, test_intermittant_ht
+reweight_hijing, 59, 60, run14_with_npart, test_intermittant_ht

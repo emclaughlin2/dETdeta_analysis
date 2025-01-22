@@ -1,0 +1,14 @@
+reweight_hijing_2024, -2, 2, 1, 1, vz_-2_2cm, quarter_calo_acceptance
+reweight_epos_2024, -2, 2, 1, 1, vz_-2_2cm, quarter_calo_acceptance
+reweight_ampt_2024, -2, 2, 1, 1, vz_-2_2cm, quarter_calo_acceptance
+reweight_hijing_2024, -20, 20, 1, 1, vz_-20_20cm, quarter_calo_acceptance
+reweight_epos_2024, -20, 20, 1, 1, vz_-20_20cm, quarter_calo_acceptance
+reweight_ampt_2024, -20, 20, 1, 1, vz_-20_20cm, quarter_calo_acceptance
+reweight_hijing_2024, -2, 2, 1, 0, vz_-2_2cm, quarter_calo_acceptance
+reweight_epos_2024, -2, 2, 1, 0, vz_-2_2cm, quarter_calo_acceptance
+reweight_ampt_2024, -2, 2, 1, 0, vz_-2_2cm, quarter_calo_acceptance
+reweight_hijing_2024, -20, 20, 1, 0, vz_-20_20cm, quarter_calo_acceptance
+reweight_epos_2024, -20, 20, 1, 0, vz_-20_20cm, quarter_calo_acceptance
+reweight_ampt_2024, -20, 20, 1, 0, vz_-20_20cm, quarter_calo_acceptance
+data, -2, 2, 0, 0, vz_-2_2cm, quarter_calo_acceptance
+data, -20, 20, 0, 0, vz_-20_20cm, quarter_calo_acceptance

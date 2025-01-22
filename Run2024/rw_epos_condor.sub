@@ -1,0 +1,7 @@
+executable = CondorMCRun.sh
+arguments = $(generator) $(centmin) $(centmax) $(tag) $(directory)
+output = output_logs/output_rw_epos_$(Process).out
+when_to_transfer_output = ON_EXIT
+error			= output_logs/error_rw_epos_$(Process).err
+log = /tmp/egm2153_$(Process).log
+queue generator, centmin, centmax, tag, directory from rw_epos_queue.list
