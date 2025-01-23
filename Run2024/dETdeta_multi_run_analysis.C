@@ -66,7 +66,7 @@ void fill_hot_dead_map_eta_bin_centers() {
     vector<float> *ihcal_eta_bins = nullptr;
     vector<float> *ohcal_eta_bins = nullptr;
 
-	TFile *hotdeadfile = new TFile("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/run54912_hotdeadmap_z_-20_20_ana450_2024p009.root", "READ"); 
+	TFile *hotdeadfile = new TFile("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/run54912_hotdeadmap_z_-10_10_ana450_2024p009_fixed_build.root", "READ"); 
 	TTree *hotdeadtree = dynamic_cast<TTree*>(hotdeadfile->Get("T"));
 	hotdeadtree->SetBranchAddress("emcal_hot_dead_ieta", &emcal_hot_dead_ieta);
     hotdeadtree->SetBranchAddress("emcal_hot_dead_iphi", &emcal_hot_dead_iphi);
@@ -90,7 +90,7 @@ void fill_hot_dead_map_eta_bin_centers() {
 	}
 	hotdeadfile->Close();
 
-	TFile *etabinfile = new TFile("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/run54912_hotdeadmap_z_-20_20_ana450_2024p009.root", "READ"); 
+	TFile *etabinfile = new TFile("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/run54912_hotdeadmap_z_-10_10_ana450_2024p009_fixed_build.root", "READ"); 
 	TTree *etabintree = dynamic_cast<TTree*>(etabinfile->Get("T"));
 	etabintree->SetBranchAddress("ihcal_eta_bin_centers", &ihcal_eta_bins);
     etabintree->SetBranchAddress("ohcal_eta_bin_centers", &ohcal_eta_bins);
@@ -127,7 +127,7 @@ void fill_zvertex_centrality(int dataormc, const char* generator) {
 	float mc_tight_cent[100]; 
 	if (dataormc) {
 		//zvertexfile = new TFile(TString::Format("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/dETdeta_vertex_reweight_run54912_%s_new_2024p007.root", generator), "READ");
-		zvertexfile = new TFile(TString::Format("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/dETdeta_vertex_reweight_run54912_%s_ana450_2024p009_with_mc_minbias_tight_cent_bins.root", generator), "READ");
+		zvertexfile = new TFile(TString::Format("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/dETdeta_vertex_reweight_run54912_%s_ana450_2024p009_fixed_build.root", generator), "READ");
 		TTree *vertextree = dynamic_cast<TTree*>(zvertexfile->Get("T"));
 		vertextree->SetBranchAddress("vertex_reweight", vz_reweight);
 		vertextree->SetBranchAddress("mc_centrality", mc_cent);
@@ -140,7 +140,7 @@ void fill_zvertex_centrality(int dataormc, const char* generator) {
 		tight_centrality_bin.assign(mc_tight_cent, mc_tight_cent+100); // edit for tight centrality
 	} else { 
 		//zvertexfile = new TFile("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/dETdeta_vertex_reweight_run54912_reweight_hijing_new_2024p007.root", "READ");
-		zvertexfile = new TFile("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/dETdeta_vertex_reweight_run54912_reweight_hijing_ana450_2024p009_with_mc_minbias_tight_cent_bins.root", "READ");
+		zvertexfile = new TFile("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/dETdeta_vertex_reweight_run54912_reweight_epos_2024_ana450_2024p009_fixed_build.root", "READ");
 		TTree *vertextree = dynamic_cast<TTree*>(zvertexfile->Get("T"));
 		//vertextree->SetBranchAddress("data_centrality", data_cent); // changed from data_centrality to use new centrality bins
 		//vertextree->GetEntry(0);
@@ -374,7 +374,7 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 	    if (closure == 1) { data_end = 2500; }
 	    if (closure == 2) { data_start = 2500; }
 		for (int i = data_start; i < data_end; i++) { 
-    		TString wildcardPath = TString::Format("%sevents_ampt_reweighted_run14_ampt_cor_%d.root", inputDirectory, i);
+    		TString wildcardPath = TString::Format("%sevents_ampt_reweighted_run14_fixed_build_ampt_cor_%d.root", inputDirectory, i);
 	    	chain.Add(wildcardPath);
 	    }
 	} else if (dataormc && !strcmp(generator, "reweight_epos_2024")) {
@@ -383,7 +383,7 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 	    if (closure == 1) { data_end = 2500; }
 	    if (closure == 2) { data_start = 2500; }
 		for (int i = data_start; i < data_end; i++) { 
-    		TString wildcardPath = TString::Format("%sevents_epos_reweighted_run14_epos_cor_%d.root", inputDirectory, i);
+    		TString wildcardPath = TString::Format("%sevents_epos_reweighted_run14_fixed_build_epos_cor_%d.root", inputDirectory, i);
 	    	chain.Add(wildcardPath);
 	    }
 	} else if (dataormc && !strcmp(generator, "reweight_hijing_2024")) {
@@ -392,7 +392,7 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 	    if (closure == 1) { data_end = 2500; }
 	    if (closure == 2) { data_start = 2500; }
 	    for (int i = data_start; i < data_end; i++) { 
-    		TString wildcardPath = TString::Format("%sevents_hijing_reweighted_run14_mc_cor_%d.root", inputDirectory, i); 
+    		TString wildcardPath = TString::Format("%sevents_hijing_reweighted_run14_fixed_build_mc_cor_%d.root", inputDirectory, i); 
 	    	chain.Add(wildcardPath);
 	    }
 	} else if (!dataormc) { 
@@ -401,7 +401,7 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
             for (int s = 0; s < good_run_length[r]; s++) {
             	//TString wildcardPath = TString::Format("%sevents_new_calib_12_12_24_ana450_2024p009_%d_100_50_50_zs_data_cor_%d.root", inputDirectory, good_runs[r], s); 
                 //TString wildcardPath = TString::Format("%sevents_ana450_2024p009_%d_100_50_50_zs_hcal_tsc_data_cor_%d.root", inputDirectory, good_runs[r], s);
-                TString wildcardPath = TString::Format("%sevents_ana450_2024p009_%d_100_50_50_zs_hcal_tsc_emcal_calib_33_data_cor_%d.root", inputDirectory, good_runs[r], s);
+                TString wildcardPath = TString::Format("%sevents_ana450_2024p009_%d_fixed_build_data_cor_%d.root", inputDirectory, good_runs[r], s);
                 //TString wildcardPath = TString::Format("%snew_calib_12_12_24_trig10_events_withzscc_ana450_2024p009_%d_data_cor_%d.root", inputDirectory, good_runs[r], s); 
                 chain.Add(wildcardPath); 
             }
@@ -599,13 +599,13 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
     	float totalcharge = 0.0;
 
   		if (dataormc) {
-	    	for (int i = 0; i < 64; i++) {
+	    	//for (int i = 0; i < 64; i++) {
 	    		//if (m_mbenergy[i] > 0.5) { mbd_nhits1 += 1; }
     			//if (m_mbenergy[i+64] > 0.5) { mbd_nhits2 += 1; }
-	    		if (m_mbenergy[i] > 0.5 && m_mbtime[i] < 25.0) { mbd_nhits1 += 1; } // moved to use old MC
-    			if (m_mbenergy[i+64] > 0.5 && m_mbtime[i] < 25.0) { mbd_nhits2 += 1; } // moved to use old MC
-    		}
-    		if (mbd_nhits1 < 2 || mbd_nhits2 < 2) { continue; } // MC minimum bias definition 
+	    	//	if (m_mbenergy[i] > 0.5 && m_mbtime[i] < 25.0) { mbd_nhits1 += 1; } // moved to use old MC
+    		//	if (m_mbenergy[i+64] > 0.5 && m_mbtime[i] < 25.0) { mbd_nhits2 += 1; } // moved to use old MC
+    		//}
+    		//if (mbd_nhits1 < 2 || mbd_nhits2 < 2) { continue; } // MC minimum bias definition 
   			
   			for (int i = 0; i < m_sectormb; i++) {
   				//if (m_mbenergy[i] > 0.5) { totalcharge += m_mbenergy[i]; }

@@ -32,7 +32,7 @@ int good_run_length[nruns] = {497};
 
 void dETdeta_multi_run_vertex_reweighting(const char* generator) {	
 
-	TFile *out = new TFile(TString::Format("dETdeta_vertex_reweight_run54912_%s_ana450_2024p009_with_mc_minbias_tight_cent_bins.root", generator),"RECREATE");
+	TFile *out = new TFile(TString::Format("dETdeta_vertex_reweight_run54912_%s_ana450_2024p009_fixed_build.root", generator),"RECREATE");
 	
 	TH1F* h_vz_data = new TH1F("h_vz_data","",200,-50,50);
 	TH1F* h_vz_data_zoom = new TH1F("h_vz_data_zoom","",200,-50,50);
@@ -48,7 +48,7 @@ void dETdeta_multi_run_vertex_reweighting(const char* generator) {
 	const char* dataInputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/";
     for (int r = 0; r < nruns; r++) {
         for (int s = 0; s < good_run_length[r]; s++) {
-            TString dataWildcardPath = TString::Format("%sevents_ana450_2024p009_%d_100_50_50_zs_hcal_tsc_data_cor_%d.root", dataInputDirectory, good_runs[r], s); 
+            TString dataWildcardPath = TString::Format("%sevents_ana450_2024p009_%d_fixed_build_data_cor_%d.root", dataInputDirectory, good_runs[r], s); 
             datachain.Add(dataWildcardPath); 
         }
     }
@@ -93,19 +93,19 @@ void dETdeta_multi_run_vertex_reweighting(const char* generator) {
 	} else if (!strcmp(generator, "reweight_hijing_2024")) {
 	    const char* mcInputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/"; 
 		for (int i = 0; i < 5000; i++) { 
-    		TString mcWildcardPath = TString::Format("%sevents_hijing_reweighted_run14_mc_cor_%d.root", mcInputDirectory, i); 
+    		TString mcWildcardPath = TString::Format("%sevents_hijing_reweighted_run14_fixed_build_mc_cor_%d.root", mcInputDirectory, i); 
 	    	mcchain.Add(mcWildcardPath);
 	    }
 	} else if (!strcmp(generator, "reweight_ampt_2024")) {
 	    const char* mcInputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/"; 
 		for (int i = 0; i < 5000; i++) { 
-    		TString mcWildcardPath = TString::Format("%sevents_ampt_reweighted_run14_ampt_cor_%d.root", mcInputDirectory, i);
+    		TString mcWildcardPath = TString::Format("%sevents_ampt_reweighted_run14_fixed_build_ampt_cor_%d.root", mcInputDirectory, i);
 	    	mcchain.Add(mcWildcardPath);
 	    }
 	} else if (!strcmp(generator, "reweight_epos_2024")) {
 	    const char* mcInputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/"; 
 		for (int i = 0; i < 5000; i++) { 
-    		TString mcWildcardPath = TString::Format("%sevents_epos_reweighted_run14_epos_cor_%d.root", mcInputDirectory, i);
+    		TString mcWildcardPath = TString::Format("%sevents_epos_reweighted_run14_fixed_build_epos_cor_%d.root", mcInputDirectory, i);
 	    	mcchain.Add(mcWildcardPath);
 	    }
 	}
@@ -131,7 +131,7 @@ void dETdeta_multi_run_vertex_reweighting(const char* generator) {
   		if (!*m_isMinBias) { continue; }
   		if (isnan(m_vtx[2])) { continue; }
   		h_vz_data->Fill(m_vtx[2]);
-  		if (fabs(m_vtx[2]) < 20.0) h_vz_data_zoom->Fill(m_vtx[2]);
+  		if (fabs(m_vtx[2]) < 10.0) h_vz_data_zoom->Fill(m_vtx[2]);
 
   		for (int i = 0; i < *m_sectormb; i++) {
   			mbde += m_mbenergy[i];
@@ -147,16 +147,16 @@ void dETdeta_multi_run_vertex_reweighting(const char* generator) {
     	float mbde = 0;
   		eventnumber++;
   		// Minbias definition
-    	for (int i = 0; i < 64; i++) {
-    		if (mbenergy[i] > 0.5 && mbtime[i] < 25.0) { mbd_nhits1 += 1; }
-    		if (mbenergy[i+64] > 0.5 && mbtime[i] < 25.0) { mbd_nhits2 += 1; }
-    	}
-    	if (mbd_nhits1 < 2 || mbd_nhits2 < 2) { continue; }
+    	//for (int i = 0; i < 64; i++) {
+    	//	if (mbenergy[i] > 0.5 && mbtime[i] < 25.0) { mbd_nhits1 += 1; }
+    	//	if (mbenergy[i+64] > 0.5 && mbtime[i] < 25.0) { mbd_nhits2 += 1; }
+    	//}
+    	//if (mbd_nhits1 < 2 || mbd_nhits2 < 2) { continue; }
   		h_vz_mc->Fill(track_vtx[2]);
-  		if (fabs(track_vtx[2]) < 20.0) h_vz_mc_zoom->Fill(track_vtx[2]);
+  		if (fabs(track_vtx[2]) < 10.0) h_vz_mc_zoom->Fill(track_vtx[2]);
   		// MBD percentiles 
   		for (int i = 0; i < *sectormb; i++) {
-  			if (mbenergy[i] > 0.5) { mbde += mbenergy[i]; }
+  			if (mbenergy[i] > 0.5 && mbtime[i] < 25.0) { mbde += mbenergy[i]; }
   		}
   		h_mbd_mc->Fill(mbde);	
 	}
