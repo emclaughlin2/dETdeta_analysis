@@ -32,9 +32,12 @@ void genStatusCDBTrees(){
       }
       */
 
-      TFile* fin = new TFile("hist_new_calib_12_12_24_trig10_events_ana450_2024p009_54912.root");
+      //TFile* fin = new TFile("hist_new_calib_12_12_24_trig10_events_ana450_2024p009_54912.root");
+      //TFile* fin = new TFile("hist_events_ana450_2024p009_54911_fixed_build_54911.root");
+      TFile* fin = new TFile("hist_events_ana450_2024p009_54914_fixed_build_54914.root");
+
       std::string tag = "ana450_2024p009";
-      std::string runNumber = "54912";
+      std::string runNumber = "54914";
 
       cout << "doing " << tag.c_str() << "  " << runNumber.c_str() << endl;
       string payloadName;
