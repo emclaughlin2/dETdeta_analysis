@@ -186,7 +186,15 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
   	else filename += "_" + zstag + "_" + closuretag + timetag + dattag + "_" + weighttag + "_" + centtag + "_" + gentag + ".root";
 
 	fill_hot_dead_map_eta_bin_centers();
-	fill_zvertex_centrality(dataormc, generator);
+	if (!strcmp(generator,"ampt_2024")) {
+		fill_zvertex_centrality(dataormc, "reweight_ampt_2024");
+	} else if (!strcmp(generator,"epos_2024") || !strcmp(generator,"reweight_brahms_epos_2024")) {
+		fill_zvertex_centrality(dataormc, "reweight_epos_2024");
+	} else if (!strcmp(generator,"hijing_2024")) {
+		fill_zvertex_centrality(dataormc, "reweight_hijing_2024");
+	} else {
+		fill_zvertex_centrality(dataormc, generator);
+	}
 	assert(centrality_bin.size() == 20);
 	if (dataormc) assert(tight_centrality_bin.size() == 100);
 
@@ -326,18 +334,18 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 
     TChain chain("ttree");
 
-    if (dataormc && !strcmp(generator, "epos")) {
+    if (dataormc && !strcmp(generator, "epos_2024")) {
     	// location of EPOS files 
-	    const char* inputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/eposrun/plugdoor_condor/";
-	    for (int i = 0; i < 1000; i++) {
-	    	TString wildcardPath = TString::Format("%sOutDir%d/epos_sim_output.root", inputDirectory, i);
+	    const char* inputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/";
+	    for (int i = 0; i < 5000; i++) {
+	    	TString wildcardPath = TString::Format("%sevents_epos_run14_fixed_build_epos_cor_%d.root", inputDirectory, i);
 	    	chain.Add(wildcardPath);
 	    }
-    } else if (dataormc && !strcmp(generator, "hijing")) { 
+    } else if (dataormc && !strcmp(generator, "hijing_2024")) { 
     	// location of HIJING files 
-	    const char* inputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/runsimana0/output/evt/";
-	    for (int i = 0; i < 2500; i++) { 
-	    	TString wildcardPath = TString::Format("%sevents_20240110_run101_nopileup_mc_cor_%d.root", inputDirectory, i); 
+	    const char* inputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/";
+	    for (int i = 0; i < 5000; i++) { 
+	    	TString wildcardPath = TString::Format("%sevents_hijing_run14_fixed_build_mc_cor_%d.root", inputDirectory, i);
 	    	chain.Add(wildcardPath);
 	    }
     } else if (dataormc && !strcmp(generator, "reweight_hijing")) {
@@ -349,11 +357,11 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 	    	//TString wildcardPath = TString::Format("%sevents_hijing_reweighted_phenix_run14_eta_-6_6_mc_cor_%d.root", inputDirectory, i);
 	    	chain.Add(wildcardPath);
 	    }
-	} else if (dataormc && !strcmp(generator, "ampt")) {
+	} else if (dataormc && !strcmp(generator, "ampt_2024")) {
     	// location of AMPT files 
-	    const char* inputDirectory = "/sphenix/user/egm2153/calib_study/detdeta/amptrun/plugdoor_condor/";
-	    for (int i = 0; i < 1000; i++) {
-	    	TString wildcardPath = TString::Format("%sOutDir%d/ampt_sim_output.root", inputDirectory , i);
+	    const char* inputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/";
+	    for (int i = 0; i < 5000; i++) {
+	    	TString wildcardPath = TString::Format("%sevents_ampt_run14_fixed_build_ampt_cor_%d.root", inputDirectory, i);
 	    	chain.Add(wildcardPath);
 	    }
     } else if (dataormc && !strcmp(generator, "reweight_ampt")) {
@@ -393,6 +401,12 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 	    if (closure == 2) { data_start = 2500; }
 	    for (int i = data_start; i < data_end; i++) { 
     		TString wildcardPath = TString::Format("%sevents_hijing_reweighted_run14_fixed_build_mc_cor_%d.root", inputDirectory, i); 
+	    	chain.Add(wildcardPath);
+	    }
+	} else if (dataormc && !strcmp(generator, "reweight_brahms_epos_2024")) {
+	    const char* inputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/";
+	    for (int i = 0; i < 5000; i++) {
+    		TString wildcardPath = TString::Format("%sevents_epos_reweighted_brahms_eta_-6_6_run14_fixed_build_epos_cor_%d.root", inputDirectory, i); 
 	    	chain.Add(wildcardPath);
 	    }
 	} else if (!dataormc) { 

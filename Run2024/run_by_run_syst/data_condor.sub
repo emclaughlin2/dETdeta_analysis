@@ -1,7 +1,7 @@
 executable = CondorDataRun.sh
 arguments = $(centmin) $(centmax) $(tag)
-output = output_logs/output_54914_$(Process).out
+output = output_logs/output_54911_$(Process).out
 when_to_transfer_output = ON_EXIT
-error			= output_logs/error_54914_$(Process).err
+error			= output_logs/error_54911_$(Process).err
 log = /tmp/egm2153_$(Process).log
 queue centmin, centmax, tag from data_queue.list
