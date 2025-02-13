@@ -410,16 +410,39 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 	    	chain.Add(wildcardPath);
 	    }
 	} else if (!dataormc) { 
-    	const char* inputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/";
-    	for (int r = 0; r < nruns; r++) {
-            for (int s = 0; s < good_run_length[r]; s++) {
-            	//TString wildcardPath = TString::Format("%sevents_new_calib_12_12_24_ana450_2024p009_%d_100_50_50_zs_data_cor_%d.root", inputDirectory, good_runs[r], s); 
-                //TString wildcardPath = TString::Format("%sevents_ana450_2024p009_%d_100_50_50_zs_hcal_tsc_data_cor_%d.root", inputDirectory, good_runs[r], s);
-                TString wildcardPath = TString::Format("%sevents_ana450_2024p009_%d_fixed_build_data_cor_%d.root", inputDirectory, good_runs[r], s);
-                //TString wildcardPath = TString::Format("%snew_calib_12_12_24_trig10_events_withzscc_ana450_2024p009_%d_data_cor_%d.root", inputDirectory, good_runs[r], s); 
-                chain.Add(wildcardPath); 
-            }
-        }
+		if (!strcmp(generator, "vz_-3cm")) {
+			const char* inputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/";
+	    	for (int r = 0; r < nruns; r++) {
+	            for (int s = 0; s < good_run_length[r]; s++) {
+	            	TString wildcardPath = TString::Format("%sevents_ana450_2024p009_vz_shift_-3cm_%d_fixed_build_data_cor_%d.root", inputDirectory, good_runs[r], s);
+	                chain.Add(wildcardPath); 
+	            }
+	        }
+		} else if (!strcmp(generator, "zs_200_100_100")) {
+			const char* inputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/";
+	    	for (int r = 0; r < nruns; r++) {
+	            for (int s = 0; s < good_run_length[r]; s++) { 
+	            	TString wildcardPath = TString::Format("%sevents_ana450_2024p009_ZS_200_100_100_%d_fixed_build_data_cor_%d.root", inputDirectory, good_runs[r], s);
+	                chain.Add(wildcardPath); 
+	            }
+	        }
+		} else if (!strcmp(generator, "zs_60_30_30")) {
+			const char* inputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/";
+	    	for (int r = 0; r < nruns; r++) {
+	            for (int s = 0; s < good_run_length[r]; s++) {
+	            	TString wildcardPath = TString::Format("%sevents_ana450_2024p009_ZS_60_30_30_%d_fixed_build_data_cor_%d.root", inputDirectory, good_runs[r], s);
+	                chain.Add(wildcardPath); 
+	            }
+	        }
+		} else {
+	    	const char* inputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/";
+	    	for (int r = 0; r < nruns; r++) {
+	            for (int s = 0; s < good_run_length[r]; s++) {
+	            	TString wildcardPath = TString::Format("%sevents_ana450_2024p009_%d_fixed_build_data_cor_%d.root", inputDirectory, good_runs[r], s);
+	                chain.Add(wildcardPath); 
+	            }
+	        }
+	    }
     } else {
     	std::cout << "generator/data not found" << std::endl;
     	return;

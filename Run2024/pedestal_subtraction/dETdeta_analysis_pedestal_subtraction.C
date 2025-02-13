@@ -65,7 +65,7 @@ void fill_hot_dead_map_eta_bin_centers() {
     vector<float> *ihcal_eta_bins = nullptr;
     vector<float> *ohcal_eta_bins = nullptr;
 
-	TFile *hotdeadfile = new TFile("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/run54912_hotdeadmap_z_-20_20_ana450_2024p009.root", "READ"); 
+	TFile *hotdeadfile = new TFile("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/run54912_hotdeadmap_z_-10_10_ana450_2024p009_fixed_build.root", "READ"); 
 	TTree *hotdeadtree = dynamic_cast<TTree*>(hotdeadfile->Get("T"));
 	hotdeadtree->SetBranchAddress("emcal_hot_dead_ieta", &emcal_hot_dead_ieta);
     hotdeadtree->SetBranchAddress("emcal_hot_dead_iphi", &emcal_hot_dead_iphi);
@@ -215,73 +215,80 @@ void dETdeta_analysis_pedestal_subtraction(int runnumber = 23727, int reweighted
     TChain chain("ttree");
 
     const char* inputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/";
-	for (int i = 0; i < 3000; i++) {
-		TString wildcardPath = TString::Format("%sevents_%d_pedestal_unc_%d.root", inputDirectory, runnumber, i);
-		chain.Add(wildcardPath);
-	}
+    if (!strcmp("zs_200_100_100_fixed_build",opt_tag)) {
+    	for (int i = 0; i < 3000; i++) {
+			TString wildcardPath = TString::Format("%sevents_%d_ZS_200_100_100_pedestal_unc_%d.root", inputDirectory, runnumber, i);
+			chain.Add(wildcardPath);
+		}
+    } else if (!strcmp("zs_60_30_30_fixed_build",opt_tag)) {
+    	for (int i = 0; i < 3000; i++) {
+			TString wildcardPath = TString::Format("%sevents_%d_ZS_60_30_30_pedestal_unc_%d.root", inputDirectory, runnumber, i);
+			chain.Add(wildcardPath);
+		}
+    } else {
+    	for (int i = 0; i < 3000; i++) {
+			TString wildcardPath = TString::Format("%sevents_%d_pedestal_unc_%d.root", inputDirectory, runnumber, i);
+			chain.Add(wildcardPath);
+		}
+    }
 
     int m_simtwrmult_cemc;
     float m_simtwr_cemc_e[cemcSize];
-    float m_simtwr_cemc_zs_e[cemcSize];
     int m_simtwr_cemc_ieta[cemcSize];
     int m_simtwr_cemc_iphi[cemcSize];
     float m_simtwr_cemc_eta[cemcSize];
-    int m_simtwr_cemc_adc[cemcSize];
-    int m_simtwr_cemc_zs_adc[cemcSize];
-    float m_simtwr_cemc_time[cemcSize];
+
     int m_simtwrmult_ihcal;
     float m_simtwr_ihcal_e[ihcalSize];
-    float m_simtwr_ihcal_zs_e[ihcalSize];
     int m_simtwr_ihcal_ieta[ihcalSize];
     int m_simtwr_ihcal_iphi[ihcalSize];
     float m_simtwr_ihcal_eta[ihcalSize];
-    int m_simtwr_ihcal_adc[ihcalSize];
-    int m_simtwr_ihcal_zs_adc[ihcalSize];
-    float m_simtwr_ihcal_time[ihcalSize];
+    
     int m_simtwrmult_ohcal;
     float m_simtwr_ohcal_e[ohcalSize];
-    float m_simtwr_ohcal_zs_e[ohcalSize];
     int m_simtwr_ohcal_ieta[ohcalSize];
     int m_simtwr_ohcal_iphi[ohcalSize];
     float m_simtwr_ohcal_eta[ohcalSize];
-    int m_simtwr_ohcal_adc[ohcalSize];
-    int m_simtwr_ohcal_zs_adc[ohcalSize];
-    float m_simtwr_ohcal_time[ohcalSize];
+
+    chain.SetBranchStatus("*", 0);
 
      // Set branch addresses
     int use_emcal = 1;
     int use_hcal = 1;
     if (use_emcal) {
+    	chain.SetBranchStatus("sectorem", 1);
+	    chain.SetBranchStatus("emcalen", 1);
+	    chain.SetBranchStatus("emcaletabin", 1);
+	    chain.SetBranchStatus("emcalphibin", 1);
+	    chain.SetBranchStatus("emetacor", 1);
 	    chain.SetBranchAddress("sectorem", &m_simtwrmult_cemc);
 	    chain.SetBranchAddress("emcalen", m_simtwr_cemc_e);
 	    chain.SetBranchAddress("emcaletabin", m_simtwr_cemc_ieta);
 	    chain.SetBranchAddress("emcalphibin", m_simtwr_cemc_iphi);
 	    chain.SetBranchAddress("emetacor", m_simtwr_cemc_eta);
-	    chain.SetBranchAddress("emcalzs", m_simtwr_cemc_zs_e);
-		chain.SetBranchAddress("emcaladc", m_simtwr_cemc_adc);
-		chain.SetBranchAddress("emcalzsadc", m_simtwr_cemc_zs_adc);
-		chain.SetBranchAddress("emcalt", m_simtwr_cemc_time);
 	}
 	if (use_hcal) {
+		chain.SetBranchStatus("sectorih", 1);
+	    chain.SetBranchStatus("ihcalen", 1);
+	    chain.SetBranchStatus("ihcaletabin", 1);
+	    chain.SetBranchStatus("ihcalphibin", 1);
+	    chain.SetBranchStatus("ihetacor", 1);
 	    chain.SetBranchAddress("sectorih", &m_simtwrmult_ihcal);
 	    chain.SetBranchAddress("ihcalen", m_simtwr_ihcal_e);
 	    chain.SetBranchAddress("ihcaletabin", m_simtwr_ihcal_ieta);
 	    chain.SetBranchAddress("ihcalphibin", m_simtwr_ihcal_iphi);
 	    chain.SetBranchAddress("ihetacor", m_simtwr_ihcal_eta);
-	    chain.SetBranchAddress("ihcalzs", m_simtwr_ihcal_zs_e);
-	    chain.SetBranchAddress("ihcaladc", m_simtwr_ihcal_adc);
-	    chain.SetBranchAddress("ihcalzsadc", m_simtwr_ihcal_zs_adc);
-	    chain.SetBranchAddress("ihcalt", m_simtwr_ihcal_time);
 
+	    chain.SetBranchStatus("sectoroh", 1);
+	    chain.SetBranchStatus("ohcalen", 1);
+	    chain.SetBranchStatus("ohcaletabin", 1);
+	    chain.SetBranchStatus("ohcalphibin", 1);
+	    chain.SetBranchStatus("ohetacor", 1);
 	    chain.SetBranchAddress("sectoroh", &m_simtwrmult_ohcal);
 	    chain.SetBranchAddress("ohcalen", m_simtwr_ohcal_e);
 	    chain.SetBranchAddress("ohcaletabin", m_simtwr_ohcal_ieta);
 	    chain.SetBranchAddress("ohcalphibin", m_simtwr_ohcal_iphi);
 	    chain.SetBranchAddress("ohetacor", m_simtwr_ohcal_eta);
-		chain.SetBranchAddress("ohcalzs", m_simtwr_ohcal_zs_e);
-	    chain.SetBranchAddress("ohcaladc", m_simtwr_ohcal_adc);
-	    chain.SetBranchAddress("ohcalzsadc", m_simtwr_ohcal_zs_adc);
-	    chain.SetBranchAddress("ohcalt", m_simtwr_ohcal_time);
 	}
 
 	int eventnumber = 0;
@@ -290,7 +297,7 @@ void dETdeta_analysis_pedestal_subtraction(int runnumber = 23727, int reweighted
     Long64_t nEntries = chain.GetEntries();
     std::cout << nEntries << std::endl;
     for (Long64_t entry = 0; entry < nEntries; ++entry) {
-    //for (Long64_t entry = 0; entry < 2; ++entry) {
+    //for (Long64_t entry = 0; entry < 1000; ++entry) {
         chain.GetEntry(entry);
     	if (eventnumber % 1000 == 0) cout << "event " << eventnumber << endl;
 
