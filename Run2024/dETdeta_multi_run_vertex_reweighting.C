@@ -23,6 +23,7 @@
 #include <vector>
 #include <TDatabasePDG.h>
 #include <tuple>
+#include <TH2F.h>
 
 using namespace std;
 
@@ -32,7 +33,7 @@ int good_run_length[nruns] = {497};
 
 void dETdeta_multi_run_vertex_reweighting(const char* generator) {	
 
-	TFile *out = new TFile(TString::Format("dETdeta_vertex_reweight_run54912_%s_ana450_2024p009_fixed_build.root", generator),"RECREATE");
+	TFile *out = new TFile(TString::Format("dETdeta_vertex_reweight_run54912_%s_mb_ana450_2024p009_fixed_build.root", generator),"RECREATE");
 	
 	TH1F* h_vz_data = new TH1F("h_vz_data","",200,-50,50);
 	TH1F* h_vz_data_zoom = new TH1F("h_vz_data_zoom","",200,-50,50);
@@ -41,6 +42,7 @@ void dETdeta_multi_run_vertex_reweighting(const char* generator) {
 	TH1F* h_mbd_data = new TH1F("h_mbd_data","",12000,0,6000);
 	TH1F* h_vz_mc_zoom = new TH1F("h_vz_mc_zoom","",200,-50,50);
 	TH1F* h_mbd_mc = new TH1F("h_mbd_mc","",250000,0,250000);
+	TH2F* h_mc_bad_vz_mbd = new TH2F("h_mc_bad_vz_mbd","",100,-1000,1000,500,0,2000);
 
 	TChain mcchain("ttree");
 	TChain datachain("ttree");
@@ -93,19 +95,19 @@ void dETdeta_multi_run_vertex_reweighting(const char* generator) {
 	} else if (!strcmp(generator, "reweight_hijing_2024")) {
 	    const char* mcInputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/"; 
 		for (int i = 0; i < 5000; i++) { 
-    		TString mcWildcardPath = TString::Format("%sevents_hijing_reweighted_run14_fixed_build_mc_cor_%d.root", mcInputDirectory, i); 
+    		TString mcWildcardPath = TString::Format("%sevents_hijing_reweighted_run14_mb_fixed_build_mc_cor_%d.root", mcInputDirectory, i); 
 	    	mcchain.Add(mcWildcardPath);
 	    }
 	} else if (!strcmp(generator, "reweight_ampt_2024")) {
 	    const char* mcInputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/"; 
 		for (int i = 0; i < 5000; i++) { 
-    		TString mcWildcardPath = TString::Format("%sevents_ampt_reweighted_run14_fixed_build_ampt_cor_%d.root", mcInputDirectory, i);
+    		TString mcWildcardPath = TString::Format("%sevents_ampt_reweighted_run14_mb_fixed_build_ampt_cor_%d.root", mcInputDirectory, i);
 	    	mcchain.Add(mcWildcardPath);
 	    }
 	} else if (!strcmp(generator, "reweight_epos_2024")) {
 	    const char* mcInputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/"; 
 		for (int i = 0; i < 5000; i++) { 
-    		TString mcWildcardPath = TString::Format("%sevents_epos_reweighted_run14_fixed_build_epos_cor_%d.root", mcInputDirectory, i);
+    		TString mcWildcardPath = TString::Format("%sevents_epos_reweighted_run14_mb_fixed_build_epos_cor_%d.root", mcInputDirectory, i);
 	    	mcchain.Add(mcWildcardPath);
 	    }
 	}
@@ -121,7 +123,7 @@ void dETdeta_multi_run_vertex_reweighting(const char* generator) {
 	TTreeReaderValue<int> sectormb(mcreader, "sectormb");
 	TTreeReaderArray<float> mbenergy(mcreader, "mbenrgy");
 	TTreeReaderArray<float> mbtime(mcreader, "mbtime");
-
+	
 	// get data vertex distribution and mbd charge distribution
 	int eventnumber = 0;
     while (datareader.Next()) {
@@ -152,12 +154,21 @@ void dETdeta_multi_run_vertex_reweighting(const char* generator) {
     	//	if (mbenergy[i+64] > 0.5 && mbtime[i] < 25.0) { mbd_nhits2 += 1; }
     	//}
     	//if (mbd_nhits1 < 2 || mbd_nhits2 < 2) { continue; }
+
   		h_vz_mc->Fill(track_vtx[2]);
   		if (fabs(track_vtx[2]) < 10.0) h_vz_mc_zoom->Fill(track_vtx[2]);
   		// MBD percentiles 
   		for (int i = 0; i < *sectormb; i++) {
-  			if (mbenergy[i] > 0.5 && mbtime[i] < 25.0) { mbde += mbenergy[i]; }
+  			if (mbenergy[i] > 0.5) { mbde += mbenergy[i]; }
   		}
+		if (fabs(track_vtx[2]) > 50.0 || std::isnan(track_vtx[2])) { 
+			if (fabs(track_vtx[2]) > 1000) {
+				std::cout << "vtx " << track_vtx[2] << " mbde " << mbde << std::endl;
+				h_mc_bad_vz_mbd->Fill(1000,mbde);
+			} else {
+				h_mc_bad_vz_mbd->Fill(track_vtx[2],mbde); 
+			}
+		}
   		h_mbd_mc->Fill(mbde);	
 	}
 
@@ -257,6 +268,6 @@ void dETdeta_multi_run_vertex_reweighting(const char* generator) {
 	vz_ratio_zoom->Write();
 	h_mbd_data->Write();
 	h_mbd_mc->Write();
-	
+	h_mc_bad_vz_mbd->Write();
 	out->Close();
 }

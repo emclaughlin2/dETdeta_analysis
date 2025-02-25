@@ -127,7 +127,7 @@ void fill_zvertex_centrality(int dataormc, const char* generator) {
 	float mc_tight_cent[100]; 
 	if (dataormc) {
 		//zvertexfile = new TFile(TString::Format("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/dETdeta_vertex_reweight_run54912_%s_new_2024p007.root", generator), "READ");
-		zvertexfile = new TFile(TString::Format("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/dETdeta_vertex_reweight_run54912_%s_ana450_2024p009_fixed_build.root", generator), "READ");
+		zvertexfile = new TFile(TString::Format("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/dETdeta_vertex_reweight_run54912_%s_mb_ana450_2024p009_fixed_build.root", generator), "READ");
 		TTree *vertextree = dynamic_cast<TTree*>(zvertexfile->Get("T"));
 		vertextree->SetBranchAddress("vertex_reweight", vz_reweight);
 		vertextree->SetBranchAddress("mc_centrality", mc_cent);
@@ -140,7 +140,7 @@ void fill_zvertex_centrality(int dataormc, const char* generator) {
 		tight_centrality_bin.assign(mc_tight_cent, mc_tight_cent+100); 
 	} else { 
 		//zvertexfile = new TFile("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/dETdeta_vertex_reweight_run54912_reweight_hijing_new_2024p007.root", "READ");
-		zvertexfile = new TFile("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/dETdeta_vertex_reweight_run54912_reweight_epos_2024_ana450_2024p009_fixed_build.root", "READ");
+		zvertexfile = new TFile("/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/dETdeta_vertex_reweight_run54912_reweight_epos_2024_mb_ana450_2024p009_fixed_build.root", "READ");
 		TTree *vertextree = dynamic_cast<TTree*>(zvertexfile->Get("T"));
 		//vertextree->SetBranchAddress("data_centrality", data_cent); // changed from data_centrality to use new centrality bins
 		//vertextree->GetEntry(0);
@@ -382,7 +382,7 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 	    if (closure == 1) { data_end = 2500; }
 	    if (closure == 2) { data_start = 2500; }
 		for (int i = data_start; i < data_end; i++) { 
-    		TString wildcardPath = TString::Format("%sevents_ampt_reweighted_run14_fixed_build_ampt_cor_%d.root", inputDirectory, i);
+    		TString wildcardPath = TString::Format("%sevents_ampt_reweighted_run14_mb_fixed_build_ampt_cor_%d.root", inputDirectory, i);
 	    	chain.Add(wildcardPath);
 	    }
 	} else if (dataormc && !strcmp(generator, "reweight_epos_2024")) {
@@ -391,8 +391,8 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 	    if (closure == 1) { data_end = 2500; }
 	    if (closure == 2) { data_start = 2500; }
 		for (int i = data_start; i < data_end; i++) { 
-    		TString wildcardPath = TString::Format("%sevents_epos_reweighted_run14_fixed_build_epos_cor_%d.root", inputDirectory, i);
-	    	chain.Add(wildcardPath);
+			TString wildcardPath = TString::Format("%sevents_epos_reweighted_run14_mb_fixed_build_epos_cor_%d.root", inputDirectory, i);
+    		chain.Add(wildcardPath);
 	    }
 	} else if (dataormc && !strcmp(generator, "reweight_hijing_2024")) {
 	    const char* inputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/";
@@ -400,8 +400,8 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 	    if (closure == 1) { data_end = 2500; }
 	    if (closure == 2) { data_start = 2500; }
 	    for (int i = data_start; i < data_end; i++) { 
-    		TString wildcardPath = TString::Format("%sevents_hijing_reweighted_run14_fixed_build_mc_cor_%d.root", inputDirectory, i); 
-	    	chain.Add(wildcardPath);
+    		TString wildcardPath = TString::Format("%sevents_hijing_reweighted_run14_mb_fixed_build_mc_cor_%d.root", inputDirectory, i); 
+	    	chain.Add(wildcardPath); 
 	    }
 	} else if (dataormc && !strcmp(generator, "reweight_brahms_epos_2024")) {
 	    const char* inputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/";
@@ -438,7 +438,7 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 	    	const char* inputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/";
 	    	for (int r = 0; r < nruns; r++) {
 	            for (int s = 0; s < good_run_length[r]; s++) {
-	            	TString wildcardPath = TString::Format("%sevents_ana450_2024p009_%d_fixed_build_data_cor_%d.root", inputDirectory, good_runs[r], s);
+	            	TString wildcardPath = TString::Format("%sevents_ana450_2024p009_%d_fixed_build_emcal_calib_26_data_cor_%d.root", inputDirectory, good_runs[r], s);
 	                chain.Add(wildcardPath); 
 	            }
 	        }
@@ -646,7 +646,7 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
   			
   			for (int i = 0; i < m_sectormb; i++) {
   				//if (m_mbenergy[i] > 0.5) { totalcharge += m_mbenergy[i]; }
-  				if (m_mbenergy[i] > 0.5 && m_mbtime[i] < 25.0) { totalcharge += m_mbenergy[i]; } // moved to use old MC
+  				if (m_mbenergy[i] > 0.5) { totalcharge += m_mbenergy[i]; } // moved to use old MC
   			}
   		}
 
@@ -709,6 +709,10 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 			eta_emcal[m_simtwr_cemc_ieta[i]] = m_simtwr_cemc_eta[i];
 		}
 		
+		// MC scale difference from cosmics simulation
+		//OHCal scale difference: 1.029804356
+		//IHCal scale difference: 1.031443343
+
 		for (int i = 0; i < m_simtwrmult_ihcal; i++) {
 			std::tuple<int, int> hot_tower = std::make_tuple(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i]);
 		    auto it = ihcal_hot_dead_map.find(hot_tower);
@@ -718,13 +722,16 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 		    	std::cout << "IHCal high chi2 channel " << m_simtwr_ihcal_ieta[i] << " " << m_simtwr_ihcal_iphi[i] << " energy " << m_simtwr_ihcal_e[i] << " chi2 " << m_simtwr_ihcal_chi2[i] << std::endl;
 		    	continue; 
 		    }
-			h_2D_ihcal_calib->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_e[i]*vz_weight);
-			h_2D_ihcal_calibT->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_e[i]*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
-			ihcale += m_simtwr_ihcal_e[i]/cosh(m_simtwr_ihcal_eta[i]); 
-			h_ihcal->Fill(m_simtwr_ihcal_e[i]/cosh(m_simtwr_ihcal_eta[i]), vz_weight);
-			//h_eT_ihcal->Fill(m_simtwr_ihcal_eta[i],m_simtwr_ihcal_e[i]*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
-			//h_eT_calo->Fill(m_simtwr_ihcal_eta[i],m_simtwr_ihcal_e[i]*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
-			E_ihcal[m_simtwr_ihcal_ieta[i]] += m_simtwr_ihcal_e[i]/cosh(m_simtwr_ihcal_eta[i]);
+		    // set MC scale difference 
+		    double simtwr_ihcal_e = m_simtwr_ihcal_e[i];
+		    if (!dataormc) simtwr_ihcal_e *= 1.031443343;
+			h_2D_ihcal_calib->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], simtwr_ihcal_e*vz_weight);
+			h_2D_ihcal_calibT->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], simtwr_ihcal_e*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
+			ihcale += simtwr_ihcal_e/cosh(m_simtwr_ihcal_eta[i]); 
+			h_ihcal->Fill(simtwr_ihcal_e/cosh(m_simtwr_ihcal_eta[i]), vz_weight);
+			//h_eT_ihcal->Fill(m_simtwr_ihcal_eta[i],simtwr_ihcal_e*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
+			//h_eT_calo->Fill(m_simtwr_ihcal_eta[i],simtwr_ihcal_e*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
+			E_ihcal[m_simtwr_ihcal_ieta[i]] += simtwr_ihcal_e/cosh(m_simtwr_ihcal_eta[i]);
 			eta_ihcal[m_simtwr_ihcal_ieta[i]] = m_simtwr_ihcal_eta[i];
 		}
 
@@ -736,13 +743,16 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 		    	std::cout << "OHCal high chi2 channel " << m_simtwr_ohcal_ieta[i] << " " << m_simtwr_ohcal_iphi[i] << " energy " << m_simtwr_ohcal_e[i] << " chi2 " << m_simtwr_ohcal_chi2[i] << std::endl;
 		    	continue; 
 		    }
-			h_2D_ohcal_calib->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_e[i]*vz_weight);
-			h_2D_ohcal_calibT->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_e[i]*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
-			ohcale += m_simtwr_ohcal_e[i]/cosh(m_simtwr_ohcal_eta[i]); 
-			h_ohcal->Fill(m_simtwr_ohcal_e[i]/cosh(m_simtwr_ohcal_eta[i]), vz_weight);
-			//h_eT_ohcal->Fill(m_simtwr_ohcal_eta[i],m_simtwr_ohcal_e[i]*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
-			//h_eT_calo->Fill(m_simtwr_ohcal_eta[i],m_simtwr_ohcal_e[i]*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
-			E_ohcal[m_simtwr_ohcal_ieta[i]] += m_simtwr_ohcal_e[i]/cosh(m_simtwr_ohcal_eta[i]);
+		    // set MC scale difference 
+		    double simtwr_ohcal_e = m_simtwr_ohcal_e[i];
+		    if (!dataormc) simtwr_ohcal_e *= 1.029804356;
+			h_2D_ohcal_calib->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], simtwr_ohcal_e*vz_weight);
+			h_2D_ohcal_calibT->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], simtwr_ohcal_e*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
+			ohcale += simtwr_ohcal_e/cosh(m_simtwr_ohcal_eta[i]); 
+			h_ohcal->Fill(simtwr_ohcal_e/cosh(m_simtwr_ohcal_eta[i]), vz_weight);
+			//h_eT_ohcal->Fill(m_simtwr_ohcal_eta[i],simtwr_ohcal_e*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
+			//h_eT_calo->Fill(m_simtwr_ohcal_eta[i],simtwr_ohcal_e*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
+			E_ohcal[m_simtwr_ohcal_ieta[i]] += simtwr_ohcal_e/cosh(m_simtwr_ohcal_eta[i]);
 			eta_ohcal[m_simtwr_ohcal_ieta[i]] = m_simtwr_ohcal_eta[i];
 		}
 
