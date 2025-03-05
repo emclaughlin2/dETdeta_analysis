@@ -51,7 +51,10 @@ for cent in cents:
 	hcal_dev = []
 
 	for i in range(len(tag)-1):
-		filename = subdir[i]+'/dETdeta_variation_'+tag[i]+'_'+cent+'.root'
+		if i < 4 or i > 16:
+			filename = subdir[i]+'/dETdeta_variation1_'+tag[i]+'_'+cent+'.root'
+		else:
+			filename = subdir[i]+'/dETdeta_variation_'+tag[i]+'_'+cent+'.root'
 		f = ROOT.TFile.Open(filename)
 		print(i, filename)
 		emcal_dev.append(TH1F(f.Get("emcal_detdeta_dev")))
@@ -140,7 +143,7 @@ for cent in cents:
 	calo_dev.append(calo_total_dev)
 	hcal_dev.append(hcal_total_dev)
 
-	testfile = "fixed_build/dETdeta_analysis_allruns_ana450_2024p009_100_50_50_ZS_hcal_tsc_emcal_calib_iter15_nozs_data_noweight_"+cent+".root"
+	testfile = "fixed_build/dETdeta_analysis_allruns_ana450_2024p009_100_50_50_ZS_hcal_scaled_emcal_calib_iter26_nozs_data_noweight_"+cent+".root"
 	f = ROOT.TFile.Open(testfile)
 	emcal_detdeta_dev = TH1F(f.Get("h_eT_eta_emcal_profile_hist").Clone("emcal_detdeta_dev"))
 	ihcal_detdeta_dev = TH1F(f.Get("h_eT_eta_ihcal_profile_hist").Clone("ihcal_detdeta_dev"))
@@ -170,7 +173,7 @@ for cent in cents:
 		hcal_detdeta_dev.SetBinContent(i, hcal_dev[-1].GetBinContent((i-1)//2+1))
 		hcal_detdeta_dev.SetBinError(i, 0)
 		
-	outfile = ROOT.TFile.Open('fixed_build/dETdeta_total_variation_'+cent+'.root',"RECREATE")
+	outfile = ROOT.TFile.Open('fixed_build/dETdeta_total_variation1_'+cent+'.root',"RECREATE")
 	emcal_detdeta_dev.Write()
 	ihcal_detdeta_dev.Write()
 	ohcal_detdeta_dev.Write()
@@ -337,8 +340,8 @@ for cent in cents:
 	outfile.Write()
 	outfile.Close()
 
-	mcfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_npart_nozs_mc_reweight_'+cent+'_reweight_epos_2024.root'
-	datafile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_ana450_2024p009_100_50_50_ZS_hcal_tsc_emcal_calib_iter15_nozs_data_noweight_'+cent+'.root'
+	mcfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_npart_mb_nozs_mc_reweight_'+cent+'_reweight_epos_2024.root'
+	datafile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_ana450_2024p009_100_50_50_ZS_hcal_scaled_emcal_calib_iter26_nozs_data_noweight_'+cent+'.root'
 	f1 = ROOT.TFile.Open(mcfile)
 	h_emcal_correction = TH1F(f1.Get("h_emcal_correction"))
 	h_ihcal_correction = TH1F(f1.Get("h_ihcal_correction"))
@@ -458,6 +461,14 @@ for cent in cents:
 		writer = csv.writer(emcalfile)
 		writer.writerow(emcal_dev_avg)
 
+	with open(hcalfilename, mode='a', newline='') as hcalfile:
+		writer = csv.writer(hcalfile)
+		writer.writerow(hcal_dev_avg)
+		
+	with open(calofilename, mode='a', newline='') as calofile:
+		writer = csv.writer(calofile)
+		writer.writerow(calo_dev_avg)
+
 	with open(ihcalfilename, mode='a', newline='') as ihcalfile:
 		writer = csv.writer(ihcalfile)
 		writer.writerow(ihcal_dev_avg)
@@ -465,11 +476,3 @@ for cent in cents:
 	with open(ohcalfilename, mode='a', newline='') as ohcalfile:
 		writer = csv.writer(ohcalfile)
 		writer.writerow(ohcal_dev_avg)
-		
-	with open(calofilename, mode='a', newline='') as calofile:
-		writer = csv.writer(calofile)
-		writer.writerow(calo_dev_avg)
-
-	with open(hcalfilename, mode='a', newline='') as hcalfile:
-		writer = csv.writer(hcalfile)
-		writer.writerow(hcal_dev_avg)

@@ -108,7 +108,7 @@ void fill_hot_dead_map_eta_bin_centers() {
 
 void dETdeta_analysis_pedestal_subtraction(int runnumber = 23727, int reweighted_bins = 1, const char* opt_tag = "") {
 
-	string filename = "dETdeta_analysis_pedestal_subtraction";
+	string filename = "dETdeta_analysis_pedestal_subtraction_final_calib";
 	filename += "_" + to_string(runnumber);
 	string opttag = opt_tag;
 	if (strcmp(opt_tag,"")) { filename += "_" + opttag; }
@@ -342,11 +342,12 @@ void dETdeta_analysis_pedestal_subtraction(int runnumber = 23727, int reweighted
 				std::tuple<int, int> hot_tower = std::make_tuple(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i]);
 			    auto it = ihcal_hot_dead_map.find(hot_tower);
 			    if (it != ihcal_hot_dead_map.end()) { continue; }
-				h_2D_ihcal_calib->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_e[i]*vz_weight);
-				h_2D_ihcal_calibT->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], m_simtwr_ihcal_e[i]*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
-				ihcale += m_simtwr_ihcal_e[i]/cosh(m_simtwr_ihcal_eta[i]); 
-				h_ihcal->Fill(m_simtwr_ihcal_e[i]/cosh(m_simtwr_ihcal_eta[i]), vz_weight);
-				E_ihcal[m_simtwr_ihcal_ieta[i]] += m_simtwr_ihcal_e[i]/cosh(m_simtwr_ihcal_eta[i]);
+				double simtwr_ihcal_e = m_simtwr_ihcal_e[i]*1.031443343;
+				h_2D_ihcal_calib->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], simtwr_ihcal_e*vz_weight);
+				h_2D_ihcal_calibT->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], simtwr_ihcal_e*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
+				ihcale += simtwr_ihcal_e/cosh(m_simtwr_ihcal_eta[i]); 
+				h_ihcal->Fill(simtwr_ihcal_e/cosh(m_simtwr_ihcal_eta[i]), vz_weight);
+				E_ihcal[m_simtwr_ihcal_ieta[i]] += simtwr_ihcal_e/cosh(m_simtwr_ihcal_eta[i]);
 				eta_ihcal[m_simtwr_ihcal_ieta[i]] = m_simtwr_ihcal_eta[i];
 			}
 
@@ -354,11 +355,12 @@ void dETdeta_analysis_pedestal_subtraction(int runnumber = 23727, int reweighted
 				std::tuple<int, int> hot_tower = std::make_tuple(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i]);
 			    auto it = ohcal_hot_dead_map.find(hot_tower);
 			    if (it != ohcal_hot_dead_map.end()) { continue; }
-				h_2D_ohcal_calib->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_e[i]*vz_weight);
-				h_2D_ohcal_calibT->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], m_simtwr_ohcal_e[i]*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
-				ohcale += m_simtwr_ohcal_e[i]/cosh(m_simtwr_ohcal_eta[i]); 
-				h_ohcal->Fill(m_simtwr_ohcal_e[i]/cosh(m_simtwr_ohcal_eta[i]), vz_weight);
-				E_ohcal[m_simtwr_ohcal_ieta[i]] += m_simtwr_ohcal_e[i]/cosh(m_simtwr_ohcal_eta[i]);
+			    double simtwr_ohcal_e = m_simtwr_ohcal_e[i]*1.029804356;
+				h_2D_ohcal_calib->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], simtwr_ohcal_e*vz_weight);
+				h_2D_ohcal_calibT->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], simtwr_ohcal_e*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
+				ohcale += simtwr_ohcal_e/cosh(m_simtwr_ohcal_eta[i]); 
+				h_ohcal->Fill(simtwr_ohcal_e/cosh(m_simtwr_ohcal_eta[i]), vz_weight);
+				E_ohcal[m_simtwr_ohcal_ieta[i]] += simtwr_ohcal_e/cosh(m_simtwr_ohcal_eta[i]);
 				eta_ohcal[m_simtwr_ohcal_ieta[i]] = m_simtwr_ohcal_eta[i];
 			}
 		}

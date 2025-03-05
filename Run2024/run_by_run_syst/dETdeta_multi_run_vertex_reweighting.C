@@ -27,12 +27,12 @@
 using namespace std;
 
 const int nruns = 1;
-int good_runs[nruns] = {54911}; // [54911, 54914]
-int good_run_length[nruns] = {511}; // [511, 447]
+int good_runs[nruns] = {54914}; // [54911, 54914]
+int good_run_length[nruns] = {447}; // [511, 447]
 
 void dETdeta_multi_run_vertex_reweighting(const char* generator) {	
 
-	TFile *out = new TFile(TString::Format("dETdeta_vertex_reweight_run54911_%s_ana450_2024p009_fixed_build.root", generator),"RECREATE");
+	TFile *out = new TFile(TString::Format("dETdeta_vertex_reweight_run54914_%s_mb_ana450_2024p009_fixed_build.root", generator),"RECREATE");
 	
 	TH1F* h_vz_data = new TH1F("h_vz_data","",200,-50,50);
 	TH1F* h_vz_data_zoom = new TH1F("h_vz_data_zoom","",200,-50,50);
@@ -93,19 +93,19 @@ void dETdeta_multi_run_vertex_reweighting(const char* generator) {
 	} else if (!strcmp(generator, "reweight_hijing_2024")) {
 	    const char* mcInputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/"; 
 		for (int i = 0; i < 5000; i++) { 
-    		TString mcWildcardPath = TString::Format("%sevents_hijing_reweighted_run14_fixed_build_mc_cor_%d.root", mcInputDirectory, i); 
+    		TString mcWildcardPath = TString::Format("%sevents_hijing_reweighted_run14_mb_fixed_build_mc_cor_%d.root", mcInputDirectory, i); 
 	    	mcchain.Add(mcWildcardPath);
 	    }
 	} else if (!strcmp(generator, "reweight_ampt_2024")) {
 	    const char* mcInputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/"; 
 		for (int i = 0; i < 5000; i++) { 
-    		TString mcWildcardPath = TString::Format("%sevents_ampt_reweighted_run14_fixed_build_ampt_cor_%d.root", mcInputDirectory, i);
+    		TString mcWildcardPath = TString::Format("%sevents_ampt_reweighted_run14_mb_fixed_build_ampt_cor_%d.root", mcInputDirectory, i);
 	    	mcchain.Add(mcWildcardPath);
 	    }
 	} else if (!strcmp(generator, "reweight_epos_2024")) {
 	    const char* mcInputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/"; 
 		for (int i = 0; i < 5000; i++) { 
-    		TString mcWildcardPath = TString::Format("%sevents_epos_reweighted_run14_fixed_build_epos_cor_%d.root", mcInputDirectory, i);
+    		TString mcWildcardPath = TString::Format("%sevents_epos_reweighted_run14_mb_fixed_build_epos_cor_%d.root", mcInputDirectory, i);
 	    	mcchain.Add(mcWildcardPath);
 	    }
 	}
@@ -156,7 +156,7 @@ void dETdeta_multi_run_vertex_reweighting(const char* generator) {
   		if (fabs(track_vtx[2]) < 10.0) h_vz_mc_zoom->Fill(track_vtx[2]);
   		// MBD percentiles 
   		for (int i = 0; i < *sectormb; i++) {
-  			if (mbenergy[i] > 0.5 && mbtime[i] < 25.0) { mbde += mbenergy[i]; }
+  			if (mbenergy[i] > 0.5) { mbde += mbenergy[i]; }
   		}
   		h_mbd_mc->Fill(mbde);	
 	}

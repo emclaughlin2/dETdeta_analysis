@@ -406,7 +406,7 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 	} else if (dataormc && !strcmp(generator, "reweight_brahms_epos_2024")) {
 	    const char* inputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/";
 	    for (int i = 0; i < 5000; i++) {
-    		TString wildcardPath = TString::Format("%sevents_epos_reweighted_brahms_eta_-6_6_run14_fixed_build_epos_cor_%d.root", inputDirectory, i); 
+    		TString wildcardPath = TString::Format("%sevents_epos_reweighted_brahms_eta_-6_6_run14_mb_fixed_build_epos_cor_%d.root", inputDirectory, i); 
 	    	chain.Add(wildcardPath);
 	    }
 	} else if (!dataormc) { 

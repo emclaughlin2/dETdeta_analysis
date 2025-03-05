@@ -14,13 +14,13 @@ colors = [TColor.GetColor(rgb[i][0],rgb[i][1],rgb[i][2]) for i in range(len(rgb)
 cents = ['0-5','5-10','10-20','20-30','30-40','40-50','50-60']
 tag = 'run_by_run'
 for cent in cents:
-    mcfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_npart_nozs_mc_reweight_'+cent+'_reweight_epos_2024.root'
-    mcfile1 = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/run_by_run_syst/dETdeta_analysis_allruns_run54911_acceptance_nozs_mc_reweight_'+cent+'_reweight_epos_2024.root'
-    mcfile2 = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/run_by_run_syst/dETdeta_analysis_allruns_run54914_acceptance_nozs_mc_reweight_'+cent+'_reweight_epos_2024.root'
-    datafile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_ana450_2024p009_100_50_50_ZS_hcal_tsc_emcal_calib_iter15_nozs_data_noweight_'+cent+'.root'
-    datafile1 = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/run_by_run_syst/dETdeta_analysis_allruns_ana450_2024p009_54911_nozs_data_noweight_'+cent+'.root'
-    datafile2 = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/run_by_run_syst/dETdeta_analysis_allruns_ana450_2024p009_54914_nozs_data_noweight_'+cent+'.root'
-    outfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_variation_'+tag+'_'+cent+'.root'
+    mcfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_npart_mb_nozs_mc_reweight_'+cent+'_reweight_epos_2024.root'
+    mcfile1 = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/run_by_run_syst/dETdeta_analysis_allruns_run54911_acceptance_mb_nozs_mc_reweight_'+cent+'_reweight_epos_2024.root'
+    mcfile2 = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/run_by_run_syst/dETdeta_analysis_allruns_run54914_acceptance_mb_nozs_mc_reweight_'+cent+'_reweight_epos_2024.root'
+    datafile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_ana450_2024p009_100_50_50_ZS_hcal_scaled_emcal_calib_iter26_nozs_data_noweight_'+cent+'.root'
+    datafile1 = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/run_by_run_syst/dETdeta_analysis_allruns_ana450_2024p009_54911_hcal_scaled_emcal_calib_iter26_nozs_data_noweight_'+cent+'.root'
+    datafile2 = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/run_by_run_syst/dETdeta_analysis_allruns_ana450_2024p009_54914_hcal_scaled_emcal_calib_iter26_nozs_data_noweight_'+cent+'.root'
+    outfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_variation1_'+tag+'_'+cent+'.root'
 
     f1 = ROOT.TFile.Open(mcfile)
     h_emcal_correction1 = TH1F(f1.Get("h_emcal_correction"))

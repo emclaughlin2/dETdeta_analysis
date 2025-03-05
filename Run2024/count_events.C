@@ -76,7 +76,7 @@ void count_events(string outfile = "hijing_reweighted_minbias_info.root") {
 
         for (int i = 0; i < 64; i++) {
             if (mbenrgy[i] > 0.5 && mbtime[i] < 25.0) { mbd_nhits1 += 1; }
-            if (mbenrgy[i+64] > 0.5 && mbtime[i] < 25.0) { mbd_nhits2 += 1; }
+            if (mbenrgy[i+64] > 0.5 && mbtime[i+64] < 25.0) { mbd_nhits2 += 1; }
        	    if (mbenrgy[i] > 0.4) { mbd_low_nhits1 += 1; }
 	    if (mbenrgy[i+64] > 0.4) {mbd_low_nhits2 += 1; }
 	    if (mbenrgy[i] > 0.5) { mbd_notime_nhits1 += 1; }
