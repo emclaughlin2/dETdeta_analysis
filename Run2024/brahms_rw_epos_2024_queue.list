@@ -1,7 +1,7 @@
-reweight_brahms_epos_2024, 0, 5, run14_with_npart_mb, fixed_build, 0
-reweight_brahms_epos_2024, 5, 10, run14_with_npart_mb, fixed_build, 0
-reweight_brahms_epos_2024, 10, 20, run14_with_npart_mb, fixed_build, 0
-reweight_brahms_epos_2024, 20, 30, run14_with_npart_mb, fixed_build, 0
-reweight_brahms_epos_2024, 30, 40, run14_with_npart_mb, fixed_build, 0
-reweight_brahms_epos_2024, 40, 50, run14_with_npart_mb, fixed_build, 0
-reweight_brahms_epos_2024, 50, 60, run14_with_npart_mb, fixed_build, 0
+reweight_brahms_epos_2024, 0, 5, run14_with_centbin, fixed_build, 0
+reweight_brahms_epos_2024, 5, 10, run14_with_centbin, fixed_build, 0
+reweight_brahms_epos_2024, 10, 20, run14_with_centbin, fixed_build, 0
+reweight_brahms_epos_2024, 20, 30, run14_with_centbin, fixed_build, 0
+reweight_brahms_epos_2024, 30, 40, run14_with_centbin, fixed_build, 0
+reweight_brahms_epos_2024, 40, 50, run14_with_centbin, fixed_build, 0
+reweight_brahms_epos_2024, 50, 60, run14_with_centbin, fixed_build, 0

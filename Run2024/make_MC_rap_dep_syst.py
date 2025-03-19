@@ -11,8 +11,8 @@ gROOT.ProcessLine("SetsPhenixStyle()")
 rgb = [[230, 25, 75], [60, 180, 75], [255, 225, 25], [0, 130, 200], [245, 130, 48], [145, 30, 180], [70, 240, 240], [240, 50, 230], [210, 245, 60], [250, 190, 212], [0, 128, 128], [220, 190, 255], [170, 110, 40], [255, 250, 200], [128, 0, 0], [170, 255, 195], [128, 128, 0], [255, 215, 180], [0, 0, 128], [128, 128, 128], [34, 139, 34], [0, 0, 0]]
 colors = [TColor.GetColor(rgb[i][0],rgb[i][1],rgb[i][2]) for i in range(len(rgb))]
 
-mcsystfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_npart_mb_nozs_mc_reweight_0-5_reweight_epos_2024.root'
-mcsystfile1 = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_npart_mb_nozs_mc_reweight_0-5_reweight_brahms_epos_2024.root'
+mcsystfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_centbin_nozs_mc_reweight_0-5_reweight_epos_2024.root'
+mcsystfile1 = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_centbin_nozs_mc_reweight_0-5_reweight_brahms_epos_2024.root'
 datasystfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_ana450_2024p009_100_50_50_ZS_hcal_scaled_emcal_calib_iter26_nozs_data_noweight_0-5.root'
 
 f1 = ROOT.TFile.Open(mcsystfile)
@@ -160,9 +160,9 @@ canvas.SaveAs('syst_plots/MC_rap_dep_syst.png')
 cents = ['0-5','5-10','10-20','20-30','30-40','40-50','50-60']
 tag = 'MC_rap_dep'
 for cent in cents:
-    mcfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_npart_mb_nozs_mc_reweight_'+cent+'_reweight_epos_2024.root'
+    mcfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_centbin_nozs_mc_reweight_'+cent+'_reweight_epos_2024.root'
     datafile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_ana450_2024p009_100_50_50_ZS_hcal_scaled_emcal_calib_iter26_nozs_data_noweight_'+cent+'.root'
-    outfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_variation1_'+tag+'_'+cent+'.root'
+    outfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_variation_'+tag+'_'+cent+'.root'
 
     f1 = ROOT.TFile.Open(mcfile)
     h_emcal_correction = TH1F(f1.Get("h_emcal_correction"))

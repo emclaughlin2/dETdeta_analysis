@@ -1,0 +1,7 @@
+executable = CondorDataOHCalSystRun.sh
+arguments = $(centmin) $(centmax) $(systtag) $(tag) $(directory)
+output = output_logs/output_ohcal_syst_fb_$(Process).out
+when_to_transfer_output = ON_EXIT
+error			= output_logs/error_ohcal_syst_fb_$(Process).err
+log = /tmp/egm2153_$(Process).log
+queue centmin, centmax, systtag, tag, directory from data_ohcal_syst_queue.list

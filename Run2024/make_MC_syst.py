@@ -8,11 +8,11 @@ import sys
 cents = ['0-5','5-10','10-20','20-30','30-40','40-50','50-60']
 tag = 'MC'
 for cent in cents:
-    mcfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_npart_mb_nozs_mc_reweight_'+cent+'_reweight_epos_2024.root'
-    mcfile1 = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_npart_mb_nozs_mc_reweight_'+cent+'_reweight_ampt_2024.root'
-    mcfile2 = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_npart_mb_nozs_mc_reweight_'+cent+'_reweight_hijing_2024.root'
+    mcfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_centbin_nozs_mc_reweight_'+cent+'_reweight_epos_2024.root'
+    mcfile1 = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_centbin_nozs_mc_reweight_'+cent+'_reweight_ampt_2024.root'
+    mcfile2 = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_centbin_nozs_mc_reweight_'+cent+'_reweight_hijing_2024.root'
     datafile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_ana450_2024p009_100_50_50_ZS_hcal_scaled_emcal_calib_iter26_nozs_data_noweight_'+cent+'.root'
-    outfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_variation1_'+tag+'_'+cent+'.root'
+    outfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_variation_'+tag+'_'+cent+'.root'
 
     f1 = ROOT.TFile.Open(mcfile)
     h_emcal_correction1 = TH1F(f1.Get("h_emcal_correction"))

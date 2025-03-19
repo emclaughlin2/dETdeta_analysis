@@ -438,7 +438,7 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 	    	const char* inputDirectory = "/sphenix/tg/tg01/commissioning/CaloCalibWG/egm2153/detdeta_run24auau/";
 	    	for (int r = 0; r < nruns; r++) {
 	            for (int s = 0; s < good_run_length[r]; s++) {
-	            	TString wildcardPath = TString::Format("%sevents_ana450_2024p009_%d_fixed_build_emcal_calib_26_data_cor_%d.root", inputDirectory, good_runs[r], s);
+	            	TString wildcardPath = TString::Format("%sevents_ana450_2024p009_%d_fixed_build_emcal_calib_26_with_systs_data_cor_%d.root", inputDirectory, good_runs[r], s);
 	                chain.Add(wildcardPath); 
 	            }
 	        }
@@ -545,10 +545,8 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
     chain.SetBranchAddress("mbenrgy", m_mbenergy);
     chain.SetBranchAddress("mbd_total_q", &m_mbdtotalq); // moved to use old MC
    	chain.SetBranchAddress("mbtime", m_mbtime); // moved to use old MC
-    if (!dataormc) {
     	chain.SetBranchAddress("isMinBias", &m_isMinBias);
-	    chain.SetBranchAddress("centbin", &m_centbin);
-    }
+	chain.SetBranchAddress("centbin", &m_centbin);
     if (dataormc) {
     	chain.SetBranchAddress("npart",&m_npart);
     	chain.SetBranchAddress("truthpar_n", &m_g4);
@@ -603,7 +601,7 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
   		// require that simulation could reconstruct a vertex for the event
   		if(isnan(m_vtx[2])) { continue; }
   		if (m_vtx[2] < minus_z || m_vtx[2] > plus_z) { continue; }
-  		if (!dataormc && !m_isMinBias) { continue; }
+  		if (!m_isMinBias) { continue; }
 
   		/*
   		// testing for intermittant hot towers 
@@ -635,7 +633,7 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
     	int mbd_nhits2 = 0;
     	float totalcharge = 0.0;
 
-  		if (dataormc) {
+  		//if (dataormc) {
 	    	//for (int i = 0; i < 64; i++) {
 	    		//if (m_mbenergy[i] > 0.5) { mbd_nhits1 += 1; }
     			//if (m_mbenergy[i+64] > 0.5) { mbd_nhits2 += 1; }
@@ -644,25 +642,25 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
     		//}
     		//if (mbd_nhits1 < 2 || mbd_nhits2 < 2) { continue; } // MC minimum bias definition 
   			
-  			for (int i = 0; i < m_sectormb; i++) {
-  				//if (m_mbenergy[i] > 0.5) { totalcharge += m_mbenergy[i]; }
-  				if (m_mbenergy[i] > 0.5) { totalcharge += m_mbenergy[i]; } // moved to use old MC
-  			}
-  		}
+  		//	for (int i = 0; i < m_sectormb; i++) {
+  		//		//if (m_mbenergy[i] > 0.5) { totalcharge += m_mbenergy[i]; }
+  		//		if (m_mbenergy[i] > 0.5) { totalcharge += m_mbenergy[i]; } // moved to use old MC
+  		//	}
+  		//}
 
-  		if (dataormc && central) {
-  			float max_charge = mc_tight_centrality(max_cent);
-  			float min_charge = mc_tight_centrality(min_cent);
-  			if (totalcharge > mc_tight_centrality(min_cent) || totalcharge < mc_tight_centrality(max_cent)) {
-  				continue; 
-  			}
-  		}
+  		//if (dataormc && central) {
+  		//	float max_charge = mc_tight_centrality(max_cent);
+  		//	float min_charge = mc_tight_centrality(min_cent);
+  		//	if (totalcharge > mc_tight_centrality(min_cent) || totalcharge < mc_tight_centrality(max_cent)) {
+  		//		continue; 
+  		//	}
+  		//}
 
-  		if (!dataormc && central && (m_centbin > max_cent || m_centbin < (min_cent + 1))) { continue; } 
+  		if (central && (m_centbin > max_cent || m_centbin < (min_cent + 1))) { continue; } 
 
-  		if (!dataormc) { totalcharge = m_mbdtotalq; }
+  		totalcharge = m_mbdtotalq; 
   		h_mbd->Fill(totalcharge);
-  		if (!dataormc) { h_cent->Fill(m_centbin); }
+  		h_cent->Fill(m_centbin); 
 
   		h_vz->Fill(m_vtx[2]);
   		if (reweighting && dataormc) { 
@@ -722,9 +720,9 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 		    	std::cout << "IHCal high chi2 channel " << m_simtwr_ihcal_ieta[i] << " " << m_simtwr_ihcal_iphi[i] << " energy " << m_simtwr_ihcal_e[i] << " chi2 " << m_simtwr_ihcal_chi2[i] << std::endl;
 		    	continue; 
 		    }
-		    // set MC scale difference 
+		    // dont use MC scale difference 
 		    double simtwr_ihcal_e = m_simtwr_ihcal_e[i];
-		    if (!dataormc) simtwr_ihcal_e *= 1.031443343;
+		    //if (!dataormc) simtwr_ihcal_e *= 1.031443343;
 			h_2D_ihcal_calib->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], simtwr_ihcal_e*vz_weight);
 			h_2D_ihcal_calibT->Fill(m_simtwr_ihcal_ieta[i], m_simtwr_ihcal_iphi[i], simtwr_ihcal_e*vz_weight/cosh(m_simtwr_ihcal_eta[i]));
 			ihcale += simtwr_ihcal_e/cosh(m_simtwr_ihcal_eta[i]); 
@@ -743,9 +741,9 @@ void dETdeta_multi_run_analysis(const char* generator = "", float minus_z = -2, 
 		    	std::cout << "OHCal high chi2 channel " << m_simtwr_ohcal_ieta[i] << " " << m_simtwr_ohcal_iphi[i] << " energy " << m_simtwr_ohcal_e[i] << " chi2 " << m_simtwr_ohcal_chi2[i] << std::endl;
 		    	continue; 
 		    }
-		    // set MC scale difference 
+		    // dont use MC scale difference 
 		    double simtwr_ohcal_e = m_simtwr_ohcal_e[i];
-		    if (!dataormc) simtwr_ohcal_e *= 1.029804356;
+		    //if (!dataormc) simtwr_ohcal_e *= 1.029804356;
 			h_2D_ohcal_calib->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], simtwr_ohcal_e*vz_weight);
 			h_2D_ohcal_calibT->Fill(m_simtwr_ohcal_ieta[i], m_simtwr_ohcal_iphi[i], simtwr_ohcal_e*vz_weight/cosh(m_simtwr_ohcal_eta[i]));
 			ohcale += simtwr_ohcal_e/cosh(m_simtwr_ohcal_eta[i]); 

@@ -15,33 +15,24 @@ gROOT.ProcessLine("SetsPhenixStyle()")
 # had resp
 # emcal 1
 # emcal 2
-# emcal 3u
-# emcal 3d
-# emcal 4
+# emcal 3
 # ihcal 1
 # ihcal 2
 # ihcal 3
-# ihcal 4
 # ohcal 1
 # ohcal 2
 # ohcal 3
-# ohcal 4
 # zs
 # z vertex
 
 cents = ['0-5','5-10','10-20','20-30','30-40','40-50','50-60']
 for cent in cents:
-	y_max = {'0-5': 150, '5-10': 120, '10-20': 100, '20-30': 70, '30-40': 40, '40-50': 30, '50-60': 20}
-	subdir = ['fixed_build','fixed_build','fixed_build','fixed_build','../runs23727_23746/emcal_syst','../runs23727_23746/emcal_syst',
-			'../runs23727_23746/emcal_syst','../runs23727_23746/emcal_syst','../runs23727_23746/emcal_syst','../runs23727_23746/hcal_syst',
-			'../runs23727_23746/hcal_syst','../runs23727_23746/hcal_syst','../runs23727_23746/hcal_syst','../runs23727_23746/hcal_syst',
-			'../runs23727_23746/hcal_syst','../runs23727_23746/hcal_syst','../runs23727_23746/hcal_syst','fixed_build','fixed_build']
-	tag = ['MC','MC_rap_dep','run_by_run','had_resp','emsyst1_w_hcal','emsyst2_w_hcal','emsyst3u_w_hcal','emsyst3d_w_hcal','emsyst4_w_hcal',
-		   'ihsyst1_w_hcal','ihsyst2_w_hcal','ihsyst3_w_hcal','ihsyst4_w_hcal','ohsyst1_w_hcal','ohsyst2_w_hcal','ohsyst3_w_hcal',
-		   'ohsyst4_w_hcal','zs_60_30_30ADC','vz_-3cm','total']
-	taglabels = ['MC','MC Rapidity Dep.','Acceptance','Had. Resp.','EMsyst1','EMsyst2','EMsyst3u','EMsyst3d','EMsyst4',
-				 'IHsyst1','IHsyst2','IHsyst3','IHsyst4','OHsyst1','OHsyst2','OHsyst3','OHsyst4','ZS','Vz Res.','Total']
-	rgb = [[230, 25, 75], [60, 180, 75], [255, 225, 25], [0, 130, 200], [245, 130, 48], [145, 30, 180], [70, 240, 240], [240, 50, 230], [210, 245, 60], [250, 190, 212], [0, 128, 128], [220, 190, 255], [170, 110, 40], [255, 250, 200], [128, 0, 0], [170, 255, 195], [128, 128, 0], [255, 215, 180], [0, 0, 128], [128, 128, 128], [34, 139, 34], [0, 0, 0]]
+	y_max = {'0-5': 170, '5-10': 140, '10-20': 110, '20-30': 80, '30-40': 50, '40-50': 40, '50-60': 30}
+	tag = ['MC','MC_rap_dep','run_by_run','had_resp','1_emsyst1','2_emsyst2','3_emsyst3','1_ihsyst1',
+				 '2_ihsyst2','3_ihsyst3','1_ohsyst1','2_ohsyst2','3_ohsyst3','zs_60_30_30ADC','vz_-3cm','total']
+	taglabels = ['MC','MC Rapidity Dep.','Acceptance','Had. Resp.','EMsyst1','EMsyst2','EMsyst3',
+				 'IHsyst1','IHsyst2','IHsyst3','OHsyst1','OHsyst2','OHsyst3','ZS','Vz Res.','Total']
+	rgb = [[230, 25, 75], [60, 180, 75], [255, 225, 25], [0, 130, 200], [245, 130, 48], [145, 30, 180], [70, 240, 240], [240, 50, 230], [210, 245, 60], [250, 190, 212], [0, 128, 128], [220, 190, 255], [170, 110, 40], [128, 128, 128], [128, 0, 0], [0, 0, 0], [128, 128, 0], [255, 215, 180], [0, 0, 128], [34, 139, 34]]
 	colors = [TColor.GetColor(rgb[i][0],rgb[i][1],rgb[i][2]) for i in range(len(rgb))]
 
 	emcal_dev = []
@@ -51,10 +42,7 @@ for cent in cents:
 	hcal_dev = []
 
 	for i in range(len(tag)-1):
-		if i < 4 or i > 16:
-			filename = subdir[i]+'/dETdeta_variation1_'+tag[i]+'_'+cent+'.root'
-		else:
-			filename = subdir[i]+'/dETdeta_variation_'+tag[i]+'_'+cent+'.root'
+		filename = 'fixed_build/dETdeta_variation_'+tag[i]+'_'+cent+'.root'
 		f = ROOT.TFile.Open(filename)
 		print(i, filename)
 		emcal_dev.append(TH1F(f.Get("emcal_detdeta_dev")))
@@ -173,12 +161,29 @@ for cent in cents:
 		hcal_detdeta_dev.SetBinContent(i, hcal_dev[-1].GetBinContent((i-1)//2+1))
 		hcal_detdeta_dev.SetBinError(i, 0)
 		
-	outfile = ROOT.TFile.Open('fixed_build/dETdeta_total_variation1_'+cent+'.root',"RECREATE")
+	outfile = ROOT.TFile.Open('fixed_build/dETdeta_total_variation_'+cent+'.root',"RECREATE")
 	emcal_detdeta_dev.Write()
 	ihcal_detdeta_dev.Write()
 	ohcal_detdeta_dev.Write()
 	calo_detdeta_dev.Write()
 	hcal_detdeta_dev.Write()
+
+# systematics 
+# 0 MC 
+# 1 MC rap dep
+# 2 run by run 
+# 3 had resp
+# 4 emcal 1
+# 5 emcal 2
+# 6 emcal 3
+# 7 ihcal 1
+# 8 ihcal 2
+# 9 ihcal 3
+# 10 ohcal 1
+# 11 ohcal 2
+# 12 ohcal 3
+# 13 zs
+# 14 z vertex
 
 	emcal_canvas = TCanvas("emcal_canvas","",500,600)
 	leg = ROOT.TLegend(.45,.4,.8,.89)
@@ -187,20 +192,13 @@ for cent in cents:
 	emcal_canvas.SetLeftMargin(0.15)
 	leg.SetBorderSize(0)
 	for i in range(len(emcal_dev)):
-		if i >= 9 and i <= 16:
+		if i >= 7 and i <= 12:
 			continue
 		leg.AddEntry(emcal_dev[i],taglabels[i],"lep")
 		emcal_dev[i].SetStats(0)
 		emcal_dev[i].SetMarkerStyle(20)
-		if i >= 17:
-			emcal_dev[i].SetLineColor(colors[i])
-			emcal_dev[i].SetMarkerColor(colors[i])
-		elif i >= 4:
-			emcal_dev[i].SetLineColor(colors[i])
-			emcal_dev[i].SetMarkerColor(colors[i])
-		else:
-			emcal_dev[i].SetLineColor(colors[i])
-			emcal_dev[i].SetMarkerColor(colors[i])
+		emcal_dev[i].SetLineColor(colors[i])
+		emcal_dev[i].SetMarkerColor(colors[i])
 		if i == 0:
 			emcal_dev[i].GetYaxis().SetRangeUser(0,y_max[cent])
 			emcal_dev[i].SetXTitle("#eta")
@@ -218,20 +216,13 @@ for cent in cents:
 	ihcal_canvas.SetLeftMargin(0.15)
 	leg.SetBorderSize(0)
 	for i in range(len(ihcal_dev)):
-		if i >= 4 and i <= 8: continue
-		if i >= 13 and i <= 16: continue
+		if i >= 4 and i <= 6: continue
+		if i >= 10 and i <= 12: continue
 		leg.AddEntry(ihcal_dev[i],taglabels[i],"lep")
 		ihcal_dev[i].SetStats(0)
 		ihcal_dev[i].SetMarkerStyle(20)
-		if i >= 18:
-			ihcal_dev[i].SetLineColor(colors[i])
-			ihcal_dev[i].SetMarkerColor(colors[i])
-		elif i >= 9:
-			ihcal_dev[i].SetLineColor(colors[i])
-			ihcal_dev[i].SetMarkerColor(colors[i])
-		else:
-			ihcal_dev[i].SetLineColor(colors[i])
-			ihcal_dev[i].SetMarkerColor(colors[i])
+		ihcal_dev[i].SetLineColor(colors[i])
+		ihcal_dev[i].SetMarkerColor(colors[i])
 		if i == 0:
 			ihcal_dev[i].GetYaxis().SetRangeUser(0,y_max[cent])
 			ihcal_dev[i].SetXTitle("#eta")
@@ -249,19 +240,12 @@ for cent in cents:
 	ohcal_canvas.SetLeftMargin(0.15)
 	leg.SetBorderSize(0)
 	for i in range(len(ohcal_dev)):
-		if i >= 4 and i <= 12: continue
+		if i >= 4 and i <= 9: continue
 		leg.AddEntry(ohcal_dev[i],taglabels[i],"lep")
 		ohcal_dev[i].SetStats(0)
 		ohcal_dev[i].SetMarkerStyle(20)
-		if i >= 18:
-			ohcal_dev[i].SetLineColor(colors[i])
-			ohcal_dev[i].SetMarkerColor(colors[i])
-		elif i >= 13:
-			ohcal_dev[i].SetLineColor(colors[i])
-			ohcal_dev[i].SetMarkerColor(colors[i])
-		else:
-			ohcal_dev[i].SetLineColor(colors[i])
-			ohcal_dev[i].SetMarkerColor(colors[i])
+		ohcal_dev[i].SetLineColor(colors[i])
+		ohcal_dev[i].SetMarkerColor(colors[i])
 		if i == 0:
 			ohcal_dev[i].GetYaxis().SetRangeUser(0,y_max[cent])
 			ohcal_dev[i].SetXTitle("#eta")
@@ -284,12 +268,8 @@ for cent in cents:
 		leg.AddEntry(calo_dev[i],taglabels[i],"lep")
 		calo_dev[i].SetStats(0)
 		calo_dev[i].SetMarkerStyle(20)
-		if i >= 9:
-			calo_dev[i].SetLineColor(colors[i])
-			calo_dev[i].SetMarkerColor(colors[i])
-		else:
-			calo_dev[i].SetLineColor(colors[i])
-			calo_dev[i].SetMarkerColor(colors[i])
+		calo_dev[i].SetLineColor(colors[i])
+		calo_dev[i].SetMarkerColor(colors[i])
 		if i == 0:
 			calo_dev[i].GetYaxis().SetRangeUser(0,y_max[cent])
 			calo_dev[i].SetXTitle("#eta")
@@ -309,19 +289,12 @@ for cent in cents:
 	hcal_canvas.SetLeftMargin(0.15)
 	leg.SetBorderSize(0)
 	for i in range(len(hcal_dev)):
-		if i >= 4 and i <= 8: continue
+		if i >= 4 and i <= 6: continue
 		leg.AddEntry(hcal_dev[i],taglabels[i],"lep")
 		hcal_dev[i].SetStats(0)
 		hcal_dev[i].SetMarkerStyle(20)
-		if i >= 18:
-			hcal_dev[i].SetLineColor(colors[i])
-			hcal_dev[i].SetMarkerColor(colors[i])
-		elif i >= 9:
-			hcal_dev[i].SetLineColor(colors[i])
-			hcal_dev[i].SetMarkerColor(colors[i])
-		else:
-			hcal_dev[i].SetLineColor(colors[i])
-			hcal_dev[i].SetMarkerColor(colors[i])
+		hcal_dev[i].SetLineColor(colors[i])
+		hcal_dev[i].SetMarkerColor(colors[i])
 		if i == 0:
 			hcal_dev[i].GetYaxis().SetRangeUser(0,y_max[cent])
 			hcal_dev[i].SetXTitle("#eta")
@@ -340,7 +313,7 @@ for cent in cents:
 	outfile.Write()
 	outfile.Close()
 
-	mcfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_npart_mb_nozs_mc_reweight_'+cent+'_reweight_epos_2024.root'
+	mcfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_centbin_nozs_mc_reweight_'+cent+'_reweight_epos_2024.root'
 	datafile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_ana450_2024p009_100_50_50_ZS_hcal_scaled_emcal_calib_iter26_nozs_data_noweight_'+cent+'.root'
 	f1 = ROOT.TFile.Open(mcfile)
 	h_emcal_correction = TH1F(f1.Get("h_emcal_correction"))
@@ -404,7 +377,24 @@ for cent in cents:
 	calo_avg = calo_detdeta_mean.GetBinContent(1)
 	hcal_avg = hcal_detdeta_mean.GetBinContent(1)
 
-	si = [0,0,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,4,5,6]
+	# systematics 
+	# 0 MC 
+	# 1 MC rap dep
+	# 2 run by run 
+	# 3 had resp
+	# 4 emcal 1
+	# 5 emcal 2
+	# 6 emcal 3
+	# 7 ihcal 1
+	# 8 ihcal 2
+	# 9 ihcal 3
+	# 10 ohcal 1
+	# 11 ohcal 2
+	# 12 ohcal 3
+	# 13 zs
+	# 14 z vertex
+
+	si = [0,0,1,2,3,3,3,3,3,3,3,3,3,4,5,6]
 	emcal_dev_avgt = np.zeros(20)
 	ihcal_dev_avgt = np.zeros(20)
 	ohcal_dev_avgt = np.zeros(20)
