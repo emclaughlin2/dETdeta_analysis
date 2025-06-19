@@ -14,44 +14,39 @@ hcal_had_frac = 0.97
 
 cents = ['0-5','5-10','10-20','20-30','30-40','40-50','50-60']
 tag = 'had_resp'
-for cent in cents:
+outfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/syst_covariance/dETdeta_signed_variation_'+tag+'.root'
+emcal_detdeta_dev = TH1F("emcal_detdeta_dev","",7,0,7)
+hcal_detdeta_dev = TH1F("hcal_detdeta_dev","",7,0,7)
+calo_detdeta_dev = TH1F("calo_detdeta_dev","",7,0,7)
+pos_eta_emcal_detdeta_dev = TH2F("pos_eta_emcal_detdeta_dev","",3,0,3,7,0,7)
+pos_eta_hcal_detdeta_dev = TH2F("pos_eta_hcal_detdeta_dev","",3,0,3,7,0,7)
+pos_eta_calo_detdeta_dev = TH2F("pos_eta_calo_detdeta_dev","",3,0,3,7,0,7)
+neg_eta_emcal_detdeta_dev = TH2F("neg_eta_emcal_detdeta_dev","",3,0,3,7,0,7)
+neg_eta_hcal_detdeta_dev = TH2F("neg_eta_hcal_detdeta_dev","",3,0,3,7,0,7)
+neg_eta_calo_detdeta_dev = TH2F("neg_eta_calo_detdeta_dev","",3,0,3,7,0,7)
+for c, cent in enumerate(cents):
     mcfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_run14_with_npart_nozs_mc_reweight_'+cent+'_reweight_epos_2024.root'
     datafile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_analysis_allruns_ana450_2024p009_100_50_50_ZS_hcal_tsc_emcal_calib_iter15_nozs_data_noweight_'+cent+'.root'
-    outfile = '/sphenix/user/egm2153/calib_study/detdeta/analysis/Run2024/fixed_build/dETdeta_variation_'+tag+'_'+cent+'.root'
-
+    
     f1 = ROOT.TFile.Open(mcfile)
     h_emcal_correction = TH1F(f1.Get("h_emcal_correction"))
-    h_ihcal_correction = TH1F(f1.Get("h_ihcal_correction"))
-    h_ohcal_correction = TH1F(f1.Get("h_ohcal_correction"))
     h_calo_correction = TH1F(f1.Get("h_calo_correction"))
     h_hcal_correction = TH1F(f1.Get("h_hcal_correction"))
     h_emcal_correction.SetDirectory(0)
-    h_ihcal_correction.SetDirectory(0)
-    h_ohcal_correction.SetDirectory(0)
     h_calo_correction.SetDirectory(0)
     h_hcal_correction.SetDirectory(0)
     f1.Close()
     f2 = ROOT.TFile.Open(datafile)
     h_eT_data_emcal = TH1F(f2.Get("h_eT_eta_emcal_profile_hist"))
-    h_eT_data_ihcal = TH1F(f2.Get("h_eT_eta_ihcal_profile_hist"))
-    h_eT_data_ohcal = TH1F(f2.Get("h_eT_eta_ohcal_profile_hist"))
     h_eT_data_calo = TH1F(f2.Get("h_eT_eta_calo_profile_hist"))
     h_eT_data_hcal = TH1F(f2.Get("h_eT_eta_hcal_profile_hist"))
     h_eT_data_emcal.SetDirectory(0)
-    h_eT_data_ihcal.SetDirectory(0)
-    h_eT_data_ohcal.SetDirectory(0)
     h_eT_data_calo.SetDirectory(0)
     h_eT_data_hcal.SetDirectory(0)
     f2.Close()
-    
-    file = ROOT.TFile(outfile, "RECREATE")
 
     emcal_detdeta = TH1F(h_eT_data_emcal.Clone("emcal_detdeta"))
     emcal_detdeta.Divide(h_emcal_correction)
-    ihcal_detdeta = TH1F(h_eT_data_ihcal.Clone("ihcal_detdeta"))
-    ihcal_detdeta.Divide(h_ihcal_correction)
-    ohcal_detdeta = TH1F(h_eT_data_ohcal.Clone("ohcal_detdeta"))
-    ohcal_detdeta.Divide(h_ohcal_correction)
     calo_detdeta = TH1F(h_eT_data_calo.Clone("calo_detdeta"))
     calo_detdeta.Divide(h_calo_correction)
     hcal_detdeta = TH1F(h_eT_data_hcal.Clone("hcal_detdeta"))
@@ -61,16 +56,6 @@ for cent in cents:
     bins = emcal_detdeta_mean.GetNbinsX()
     emcal_detdeta_mean.Rebin(bins)
     emcal_detdeta_mean.Scale(1.0/bins)
-
-    ihcal_detdeta_mean = ihcal_detdeta.Clone("ihcal_detdeta_mean")
-    bins = ihcal_detdeta_mean.GetNbinsX()
-    ihcal_detdeta_mean.Rebin(bins)
-    ihcal_detdeta_mean.Scale(1.0/bins)
-
-    ohcal_detdeta_mean = ohcal_detdeta.Clone("ohcal_detdeta_mean")
-    bins = ohcal_detdeta_mean.GetNbinsX()
-    ohcal_detdeta_mean.Rebin(bins)
-    ohcal_detdeta_mean.Scale(1.0/bins)
 
     calo_detdeta_mean = calo_detdeta.Clone("calo_detdeta_mean")
     bins = calo_detdeta_mean.GetNbinsX()
@@ -82,44 +67,70 @@ for cent in cents:
     hcal_detdeta_mean.Rebin(bins)
     hcal_detdeta_mean.Scale(1.0/bins)
 
-    emcal_detdeta_dev = TH1F(emcal_detdeta.Clone("emcal_detdeta_dev"))
-    emcal_detdeta_dev.SetXTitle("#eta")
-    emcal_detdeta_dev.SetYTitle("dE_{T}/d#eta dev. [GeV]")
-    for i in range(1, emcal_detdeta_dev.GetNbinsX() + 1):
-        emcal_detdeta_dev.SetBinContent(i, (emcal_detdeta_mean.GetBinContent(1)*2.0*had_resp_unc*emcal_had_frac)/(np.sqrt(12))) # RMS of uniform distribution
-        emcal_detdeta_dev.SetBinError(i, (emcal_detdeta_mean.GetBinError(1)*2.0*had_resp_unc*emcal_had_frac)/(np.sqrt(12)))
+    emcal_detdeta_dev12 = TH1F(emcal_detdeta.Clone("emcal_detdeta_dev12"))
+    emcal_detdeta_dev12.SetXTitle("#eta")
+    emcal_detdeta_dev12.SetYTitle("dE_{T}/d#eta dev. [GeV]")
+    for i in range(1, emcal_detdeta_dev12.GetNbinsX() + 1):
+        emcal_detdeta_dev12.SetBinContent(i, (emcal_detdeta_mean.GetBinContent(1)*2.0*had_resp_unc*emcal_had_frac)/(np.sqrt(12))) # RMS of uniform distribution
+        emcal_detdeta_dev12.SetBinError(i, (emcal_detdeta_mean.GetBinError(1)*2.0*had_resp_unc*emcal_had_frac)/(np.sqrt(12)))
 
-    ihcal_detdeta_dev = TH1F(ihcal_detdeta.Clone("ihcal_detdeta_dev"))
-    ihcal_detdeta_dev.SetXTitle("#eta")
-    ihcal_detdeta_dev.SetYTitle("dE_{T}/d#eta dev. [GeV]")
-    for i in range(1, ihcal_detdeta_dev.GetNbinsX() + 1):
-        ihcal_detdeta_dev.SetBinContent(i, (ihcal_detdeta_mean.GetBinContent(1)*2.0*had_resp_unc*ihcal_had_frac)/(np.sqrt(12)))
-        ihcal_detdeta_dev.SetBinError(i, (ihcal_detdeta_mean.GetBinError(1)*2.0*had_resp_unc*ihcal_had_frac)/(np.sqrt(12)))
+    calo_detdeta_dev12 = TH1F(calo_detdeta.Clone("calo_detdeta_dev12"))
+    calo_detdeta_dev12.SetXTitle("#eta")
+    calo_detdeta_dev12.SetYTitle("dE_{T}/d#eta dev. [GeV]")
+    for i in range(1, calo_detdeta_dev12.GetNbinsX() + 1):
+        calo_detdeta_dev12.SetBinContent(i, (calo_detdeta_mean.GetBinContent(1)*2.0*had_resp_unc*calo_had_frac)/(np.sqrt(12)))
+        calo_detdeta_dev12.SetBinError(i, (calo_detdeta_mean.GetBinError(1)*2.0*had_resp_unc*calo_had_frac)/(np.sqrt(12)))
 
-    ohcal_detdeta_dev = TH1F(ohcal_detdeta.Clone("ohcal_detdeta_dev"))
-    ohcal_detdeta_dev.SetXTitle("#eta")
-    ohcal_detdeta_dev.SetYTitle("dE_{T}/d#eta dev. [GeV]")
-    for i in range(1, ohcal_detdeta_dev.GetNbinsX() + 1):
-        ohcal_detdeta_dev.SetBinContent(i, (ohcal_detdeta_mean.GetBinContent(1)*2.0*had_resp_unc*ohcal_had_frac)/(np.sqrt(12)))
-        ohcal_detdeta_dev.SetBinError(i, (ohcal_detdeta_mean.GetBinError(1)*2.0*had_resp_unc*ohcal_had_frac)/(np.sqrt(12)))
+    hcal_detdeta_dev12 = TH1F(hcal_detdeta.Clone("hcal_detdeta_dev12"))
+    hcal_detdeta_dev12.SetXTitle("#eta")
+    hcal_detdeta_dev12.SetYTitle("dE_{T}/d#eta dev. [GeV]")
+    for i in range(1, hcal_detdeta_dev12.GetNbinsX() + 1):
+        hcal_detdeta_dev12.SetBinContent(i, (hcal_detdeta_mean.GetBinContent(1)*2.0*had_resp_unc*hcal_had_frac)/(np.sqrt(12)))
+        hcal_detdeta_dev12.SetBinError(i, (hcal_detdeta_mean.GetBinError(1)*2.0*had_resp_unc*hcal_had_frac)/(np.sqrt(12)))
 
-    calo_detdeta_dev = TH1F(calo_detdeta.Clone("calo_detdeta_dev"))
-    calo_detdeta_dev.SetXTitle("#eta")
-    calo_detdeta_dev.SetYTitle("dE_{T}/d#eta dev. [GeV]")
-    for i in range(1, calo_detdeta_dev.GetNbinsX() + 1):
-        calo_detdeta_dev.SetBinContent(i, (calo_detdeta_mean.GetBinContent(1)*2.0*had_resp_unc*calo_had_frac)/(np.sqrt(12)))
-        calo_detdeta_dev.SetBinError(i, (calo_detdeta_mean.GetBinError(1)*2.0*had_resp_unc*calo_had_frac)/(np.sqrt(12)))
+    bins = emcal_detdeta_dev12.GetNbinsX()
+    neg_eta_emcal_detdeta_dev.SetBinContent(neg_eta_emcal_detdeta_dev.GetBin(1, c+1), emcal_detdeta_dev12.GetBinContent(1))
+    pos_eta_emcal_detdeta_dev.SetBinContent(pos_eta_emcal_detdeta_dev.GetBin(1, c+1), emcal_detdeta_dev12.GetBinContent(6))
+    neg_eta_emcal_detdeta_dev.SetBinContent(neg_eta_emcal_detdeta_dev.GetBin(2, c+1), emcal_detdeta_dev12.GetBinContent(2))
+    pos_eta_emcal_detdeta_dev.SetBinContent(pos_eta_emcal_detdeta_dev.GetBin(2, c+1), emcal_detdeta_dev12.GetBinContent(5))
+    neg_eta_emcal_detdeta_dev.SetBinContent(neg_eta_emcal_detdeta_dev.GetBin(3, c+1), emcal_detdeta_dev12.GetBinContent(3))
+    pos_eta_emcal_detdeta_dev.SetBinContent(pos_eta_emcal_detdeta_dev.GetBin(3, c+1), emcal_detdeta_dev12.GetBinContent(4))
+    emcal_detdeta_dev12.Rebin(bins)
+    emcal_detdeta_dev12.Scale(1.0/bins)
+    emcal_detdeta_dev.SetBinContent(c+1, emcal_detdeta_dev.GetBinContent(c+1) + emcal_detdeta_dev12.GetBinContent(1))
 
-    hcal_detdeta_dev = TH1F(hcal_detdeta.Clone("hcal_detdeta_dev"))
-    hcal_detdeta_dev.SetXTitle("#eta")
-    hcal_detdeta_dev.SetYTitle("dE_{T}/d#eta dev. [GeV]")
-    for i in range(1, hcal_detdeta_dev.GetNbinsX() + 1):
-        hcal_detdeta_dev.SetBinContent(i, (hcal_detdeta_mean.GetBinContent(1)*2.0*had_resp_unc*hcal_had_frac)/(np.sqrt(12)))
-        hcal_detdeta_dev.SetBinError(i, (hcal_detdeta_mean.GetBinError(1)*2.0*had_resp_unc*hcal_had_frac)/(np.sqrt(12)))
+    bins = calo_detdeta_dev12.GetNbinsX()
+    neg_eta_calo_detdeta_dev.SetBinContent(neg_eta_calo_detdeta_dev.GetBin(1, c+1), calo_detdeta_dev12.GetBinContent(1))
+    pos_eta_calo_detdeta_dev.SetBinContent(pos_eta_calo_detdeta_dev.GetBin(1, c+1), calo_detdeta_dev12.GetBinContent(6))
+    neg_eta_calo_detdeta_dev.SetBinContent(neg_eta_calo_detdeta_dev.GetBin(2, c+1), calo_detdeta_dev12.GetBinContent(2))
+    pos_eta_calo_detdeta_dev.SetBinContent(pos_eta_calo_detdeta_dev.GetBin(2, c+1), calo_detdeta_dev12.GetBinContent(5))
+    neg_eta_calo_detdeta_dev.SetBinContent(neg_eta_calo_detdeta_dev.GetBin(3, c+1), calo_detdeta_dev12.GetBinContent(3))
+    pos_eta_calo_detdeta_dev.SetBinContent(pos_eta_calo_detdeta_dev.GetBin(3, c+1), calo_detdeta_dev12.GetBinContent(4))
+    calo_detdeta_dev12.Rebin(bins)
+    calo_detdeta_dev12.Scale(1.0/bins)
+    calo_detdeta_dev.SetBinContent(c+1, calo_detdeta_dev.GetBinContent(c+1) + calo_detdeta_dev12.GetBinContent(1))
 
-    emcal_detdeta_dev.Write()
-    ihcal_detdeta_dev.Write()
-    ohcal_detdeta_dev.Write()
-    calo_detdeta_dev.Write()
-    hcal_detdeta_dev.Write()
-    file.Close()
+    bins = hcal_detdeta_dev12.GetNbinsX()
+    neg_eta_hcal_detdeta_dev.SetBinContent(neg_eta_hcal_detdeta_dev.GetBin(1, c+1), hcal_detdeta_dev12.GetBinContent(1))
+    pos_eta_hcal_detdeta_dev.SetBinContent(pos_eta_hcal_detdeta_dev.GetBin(1, c+1), hcal_detdeta_dev12.GetBinContent(6))
+    neg_eta_hcal_detdeta_dev.SetBinContent(neg_eta_hcal_detdeta_dev.GetBin(2, c+1), hcal_detdeta_dev12.GetBinContent(2))
+    pos_eta_hcal_detdeta_dev.SetBinContent(pos_eta_hcal_detdeta_dev.GetBin(2, c+1), hcal_detdeta_dev12.GetBinContent(5))
+    neg_eta_hcal_detdeta_dev.SetBinContent(neg_eta_hcal_detdeta_dev.GetBin(3, c+1), hcal_detdeta_dev12.GetBinContent(3))
+    pos_eta_hcal_detdeta_dev.SetBinContent(pos_eta_hcal_detdeta_dev.GetBin(3, c+1), hcal_detdeta_dev12.GetBinContent(4))
+    hcal_detdeta_dev12.Rebin(bins)
+    hcal_detdeta_dev12.Scale(1.0/bins)
+    hcal_detdeta_dev.SetBinContent(c+1, hcal_detdeta_dev.GetBinContent(c+1) + hcal_detdeta_dev12.GetBinContent(1))
+    
+file = ROOT.TFile(outfile, "RECREATE")
+file.cd()
+pos_eta_emcal_detdeta_dev.Write()
+pos_eta_calo_detdeta_dev.Write()
+pos_eta_hcal_detdeta_dev.Write()
+neg_eta_emcal_detdeta_dev.Write()
+neg_eta_calo_detdeta_dev.Write()
+neg_eta_hcal_detdeta_dev.Write()
+emcal_detdeta_dev.Write()
+calo_detdeta_dev.Write()
+hcal_detdeta_dev.Write()
+file.Write()
+file.Close()
